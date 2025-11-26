@@ -1,0 +1,346 @@
+import React, { useState } from "react";
+import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
+import PropTypes from "prop-types";
+
+export default function ContactSection({
+  id = "contact",
+  heading = "Get In Touch",
+  subheading = `Ready to transform your mobile app idea into reality? Let’s\ndiscuss your project and see how we can help you achieve your\ngoals.`,
+  contactCardTitle = "Let’s Start a Conversation",
+  contactText = `We’re here to answer your questions and discuss how we can bring\nyour mobile app vision to life. Reach out to us through any of\nthe following channels.`,
+  phone = {
+    label: "Phone Number",
+    number: "+91 11 40789940",
+    href: "tel:+911140789940",
+  },
+  email = {
+    label: "Email",
+    address: "sales@logzerotechnologies.com",
+    mode: "mailto",
+  },
+  address = {
+    label: "Address",
+    lines: [
+      "Pegasus Tower, A-10, 8th Floor, Sector-68,",
+      "Gautam Buddha Nagar, Noida, Uttar Pradesh, 201301",
+    ],
+    mapLink: "https://maps.app.goo.gl/f1tAeRmdHf2wWoMD6",
+  },
+  businessHours = [
+    { day: "Monday–Friday", text: "24x7 Open" },
+    { day: "Saturday", text: "Closed" },
+    { day: "Sunday", text: "Closed" },
+  ],
+  form = {
+    respondText: "We typically respond within 24 hours during business days.",
+  },
+  emailComposeMode = "mailto",
+  onSubmit,
+}) {
+  const emailHref =
+    emailComposeMode === "gmail"
+      ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+          email.address
+        )}`
+      : `mailto:${email.address}`;
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    detail: "",
+  });
+  const [formSuccess, setFormSucess] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const errors = {};
+
+    if (!formData.name.trim()) {
+      errors.name = "Full name is required.";
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Please enter a valid email address.";
+    }
+
+    if (!formData.detail.trim()) {
+      errors.detail = "Please tell us about your project.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setFormErrors({});
+
+    const payload = {
+      full_name: formData.name,
+      email: formData.email,
+      phone_number: formData.phone,
+      project_desc: formData.detail,
+    };
+    try {
+      const res = await fetch(
+        "https://webapi.logzerotechnologies.com/api/v1/consultation/create-inquiry",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      const responseData = await res.json();
+      if (res.ok) {
+        console.log(responseData);
+        setFormSucess(true);
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          detail: "",
+        });
+      }
+    } catch (error) {}
+  };
+
+  return (
+    <section id={id} className="py-16 px-6 bgblue3 ">
+      <div className="container mx-auto w-full max-w-6xl">
+        <div className="mb-10 text-center">
+          <h2 className="mb-3">{heading}</h2>
+          <p className="mx-auto max-full md:max-w-[55%] text-center whitespace-pre-line">
+            {subheading}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <div className="rounded-xl bg-white p-6 border border-[#E6E8E999] shadow-[0px_19px_25px_-5px_rgba(16,24,40,0.05)]">
+            <h3 className="mb-6 !text-[24px]">{contactCardTitle}</h3>
+            <p className="whitespace-pre-line">{contactText}</p>
+
+            <ul className="space-y-5 pt-5">
+              <li className="flex flex-col lg:flex-row items-start gap-4 p-2">
+                <div className="w-14 h-14 p-3 bgblue0 flex items-center justify-center rounded-full">
+                  <Phone size={24} className="text-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className="subheading-2">{phone.label}</p>
+                  <a href={phone.href} className="subtextcolor">
+                    {phone.number}
+                  </a>
+                </div>
+              </li>
+
+              <li className="flex flex-col lg:flex-row items-start gap-4 p-2">
+                <div className="w-14 h-14 p-3 peachgreen-200 flex items-center justify-center rounded-full">
+                  <Mail size={24} className="text-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className="subheading-2">{email.label}</p>
+                  <div className="space-y-0.5">
+                    <a
+                      href={emailHref}
+                      className="subtextcolor  break-words "
+                      target={
+                        emailComposeMode === "gmail" ? "_blank" : undefined
+                      }
+                      rel={
+                        emailComposeMode === "gmail"
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                    >
+                      {email.address}
+                    </a>
+                  </div>
+                </div>
+              </li>
+
+              <li className="flex flex-col lg:flex-row items-start gap-4 p-2">
+                <div className="w-14 h-14 p-4 bggreen-100 flex items-center justify-center rounded-full">
+                  <MapPin size={24} className="text-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className="subheading-2">{address.label}</p>
+                  <a
+                    href={address.mapLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="subtext subtextcolor text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-300"
+                  >
+                    <p>
+                      {address.lines.map((line, i) => (
+                        <React.Fragment key={i}>
+                          {line}
+                          {i !== address.lines.length - 1 && <br />}
+                        </React.Fragment>
+                      ))}
+                    </p>
+                  </a>
+                </div>
+              </li>
+
+              <li className="flex flex-col lg:flex-row items-start gap-4 p-2">
+                <div className="w-14 h-14 p-3 bgorange-200 flex items-center justify-center rounded-full">
+                  <Clock size={24} className="text-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className="subheading-2">Business Hours</p>
+                  <div className="subtext subtextcolor">
+                    {businessHours.map((h, idx) => (
+                      <p key={idx} className="subtext subtextcolor !mb-0">
+                        {h.day}: {h.text}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div className="rounded-xl bg-white p-6 border border-[#E6E8E999] shadow-[0px_19px_25px_-5px_rgba(16,24,40,0.05)]">
+            <h3 className="mb-6 !text-[24px]">Schedule a Free Consultation</h3>
+            {formSuccess && (
+              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+                <p className="font-bold">Success! 🎉</p>
+                <p>
+                  Your consultation request has been submitted. We will contact
+                  you shortly.
+                </p>
+              </div>
+            )}
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 gap-5">
+                <div className="space-y-2">
+                  <label className="block text-[15px] leading-[22px] font-[600] text-[#111827] font-inter">
+                    Full Name
+                  </label>
+                  <input
+                    name="name"
+                    type="text"
+                    onChange={handleChange}
+                    value={formData.name}
+                    placeholder="Your First Name"
+                    className="block w-full box-border bg-white text-[#111827] font-inter text-[15px] leading-[22px] border border-[#E5E5E7] rounded-[6px] px-[12px] py-[12px] placeholder-slate-400 outline-none ring-emerald-500 focus:border-emerald-500 focus:ring-2 transition-all duration-300"
+                  />
+                  {formErrors.name && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors.name}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2 ">
+                  <label className="block text-[15px] leading-[22px] font-[600] text-[#111827] font-inter">
+                    Email Address
+                  </label>
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="Your @email.com"
+                    onChange={handleChange}
+                    value={formData.email}
+                    className="block w-full box-border bg-white text-[#111827] font-inter text-[15px] leading-[22px] border border-[#E5E5E7] rounded-[6px] px-[12px] py-[12px] placeholder-slate-400 outline-none ring-emerald-500 focus:border-emerald-500 focus:ring-2 transition-all duration-300"
+                  />
+                  {formErrors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors.email}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-5">
+                <div className="space-y-2">
+                  <label className="block text-[15px] leading-[22px] font-[600] text-[#111827] font-inter">
+                    Phone Number{" "}
+                    <span className="text-slate-400">(Optional)</span>
+                  </label>
+                  <input
+                    name="phone"
+                    onChange={handleChange}
+                    value={formData.phone}
+                    type="tel"
+                    placeholder="+91 95674 78449"
+                    className="block w-full box-border bg-white text-[#111827] font-inter text-[15px] leading-[22px] border border-[#E5E5E7] rounded-[6px] px-[12px] py-[12px] placeholder-slate-400 outline-none ring-emerald-500 focus:border-emerald-500 focus:ring-2 transition-all duration-300"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-[15px] leading-[22px] font-[600] text-[#111827] font-inter">
+                  Project Details
+                </label>
+                <textarea
+                  name="detail"
+                  rows={4}
+                  onChange={handleChange}
+                  value={formData.detail}
+                  placeholder="Tell us about your project and requirements..."
+                  className="block w-full resize-y rounded-md border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 outline-none ring-emerald-500 focus:border-emerald-500 focus:ring-2"
+                />
+                {formErrors.detail && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.detail}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <button
+                  type="submit"
+                  className="inline-flex w-full items-center justify-center bluenew text-white font-[600] text-[15px] leading-[22px] border border-[#5BC2A7] rounded-[6px] px-[24px] py-[17px] font-inter cursor-pointer transition duration-300 ease-in-out hover:bg-[#179A8E] hover:text-white transition-transform hover:scale-104 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                >
+                  <Send className="textcolor text-[9px] pr-[10px]" /> Send
+                  Message
+                </button>
+                <p className="mx-auto max-w-[616px] subtextcolor text-center !text-[14px] px-6">
+                  {form.respondText}
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+ContactSection.propTypes = {
+  id: PropTypes.string,
+  heading: PropTypes.string,
+  subheading: PropTypes.string,
+  contactCardTitle: PropTypes.string,
+  contactText: PropTypes.string,
+  phone: PropTypes.shape({
+    label: PropTypes.string,
+    number: PropTypes.string,
+    href: PropTypes.string,
+  }),
+  email: PropTypes.shape({
+    label: PropTypes.string,
+    address: PropTypes.string,
+  }),
+  address: PropTypes.shape({
+    label: PropTypes.string,
+    lines: PropTypes.arrayOf(PropTypes.string),
+    mapLink: PropTypes.string,
+  }),
+  businessHours: PropTypes.arrayOf(
+    PropTypes.shape({ day: PropTypes.string, text: PropTypes.string })
+  ),
+  form: PropTypes.object,
+  emailComposeMode: PropTypes.oneOf(["mailto", "gmail"]),
+  onSubmit: PropTypes.func,
+};
