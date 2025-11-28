@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 import PropTypes from "prop-types";
-
+import Recaptcha from "./Recaptcha";
 export default function ContactSection({
   id = "contact",
   heading = "Get In Touch",
@@ -52,6 +52,7 @@ export default function ContactSection({
   });
   const [formSuccess, setFormSucess] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [recaptchaToken, setRecaptchaToken] = useState(null);  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -59,7 +60,16 @@ export default function ContactSection({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  // 1. Find the reCAPTCHA response token
+    // The reCAPTCHA widget inserts a hidden input field named 'g-recaptcha-response'
+    const recaptchaTokenField = document.querySelector('[name="g-recaptcha-response"]');
+    const recaptchaToken = recaptchaTokenField ? recaptchaTokenField.value : null;
 
+    if (!recaptchaToken) {
+        alert("Please complete the reCAPTCHA verification.");
+        // Optional: If you are using explicit rendering, you might need to reset/re-render the widget here.
+        return; 
+    }
     const errors = {};
 
     if (!formData.name.trim()) {
@@ -88,6 +98,7 @@ export default function ContactSection({
       email: formData.email,
       phone_number: formData.phone,
       project_desc: formData.detail,
+      'g-recaptcha-response': recaptchaToken,
     };
     try {
       const res = await fetch(
@@ -110,8 +121,22 @@ export default function ContactSection({
           phone: "",
           detail: "",
         });
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
+      }else{
+        alert(`Form submission failed: ${responseData.message}`);
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }}
+          
+       
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      if (window.grecaptcha) {
+        window.grecaptcha.reset();
       }
-    } catch (error) {}
+    }
   };
 
   return (
@@ -296,6 +321,9 @@ export default function ContactSection({
                   </p>
                 )}
               </div>
+                                       <div className="flex justify-center py-4">
+    <Recaptcha onVerify={setRecaptchaToken} />
+  </div>
 
               <div className="space-y-3">
                 <button

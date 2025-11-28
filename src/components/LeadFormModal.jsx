@@ -14,11 +14,11 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { useModal } from "@/context/ModalContext";
-
+import Recaptcha from "./Recaptcha";
 export default function LeadFormModal() {
   const { open, payload, closeModal } = useModal();
   const servicesFromPayload = payload?.servicesOptions || null;
-
+ const [recaptchaToken, setRecaptchaToken] = useState(null);  
   const dateInputRef = useRef(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -110,7 +110,16 @@ export default function LeadFormModal() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+   // 1. Find the reCAPTCHA response token
+    // The reCAPTCHA widget inserts a hidden input field named 'g-recaptcha-response'
+    const recaptchaTokenField = document.querySelector('[name="g-recaptcha-response"]');
+    const recaptchaToken = recaptchaTokenField ? recaptchaTokenField.value : null;
 
+    if (!recaptchaToken) {
+        alert("Please complete the reCAPTCHA verification.");
+        // Optional: If you are using explicit rendering, you might need to reset/re-render the widget here.
+        return; 
+    }
     if (
       !formData.fullName ||
       !formData.Email ||
@@ -137,6 +146,7 @@ export default function LeadFormModal() {
       pref_time: formData.consultationDateTime,
       project_desc: formData.projectDescription,
       origin: formData.hearAboutUs,
+      'g-recaptcha-response': recaptchaToken,
     };
 
     try {
@@ -166,19 +176,33 @@ export default function LeadFormModal() {
           consultationDateTime: "",
           hearAboutUs: "",
         });
+        
         alert("Your form has been submitted successfully.");
+         // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
       } else {
         setSubmissionStatus("error");
         const serverError =
           responseData.message || responseData.error || "Unknown server error.";
         setErrorMessage(`Submission failed: ${serverError}`);
         console.error("API submission failed:", response.status, serverError);
+        // alert(`Form submission failed: ${response.message}`);
+         // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
       }
     } catch (err) {
       setSubmissionStatus("error");
       setErrorMessage(
         "A network error occurred. Please check your connection."
       );
+       // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
       console.error("Network or fetch error:", err);
     } finally {
       setIsSubmitting(false);
@@ -441,7 +465,11 @@ export default function LeadFormModal() {
                 <option value="other">Other</option>
               </select>
             </div>
-
+              
+              {/* captcha field */}
+                                       <div className="flex justify-center py-4">
+    <Recaptcha onVerify={setRecaptchaToken} />
+  </div>
             {/* Submit */}
             <div className="pt-4">
               <button

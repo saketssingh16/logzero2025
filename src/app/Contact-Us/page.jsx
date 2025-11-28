@@ -7,8 +7,9 @@ import Trusted from "@/components/Trusted";
 import Head from "./head";
 import FAQSection from "@/components/FAQSection";
 import { useEffect, useState } from "react";
-
+import Recaptcha from "../../components/Recaptcha"
 export default function ContactSection() {
+ const [recaptchaToken, setRecaptchaToken] = useState(null);  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -120,11 +121,22 @@ export default function ContactSection() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 1. Find the reCAPTCHA response token
+    // The reCAPTCHA widget inserts a hidden input field named 'g-recaptcha-response'
+    const recaptchaTokenField = document.querySelector('[name="g-recaptcha-response"]');
+    const recaptchaToken = recaptchaTokenField ? recaptchaTokenField.value : null;
+
+    if (!recaptchaToken) {
+        alert("Please complete the reCAPTCHA verification.");
+        // Optional: If you are using explicit rendering, you might need to reset/re-render the widget here.
+        return; 
+    }
     const payload = {
       full_name: formData.name,
       email: formData.email,
       phone_number: formData.phone,
       message: formData.detail,
+      'g-recaptcha-response': recaptchaToken,
     };
     try {
       const res = await fetch(
@@ -137,9 +149,11 @@ export default function ContactSection() {
           body: JSON.stringify(payload),
         }
       );
+      console.log("res", res);
       const responseData = await res.json();
+      console.log("Submission response:", responseData);
       if (res.ok) {
-        console.log(responseData);
+        console.log( "Submission response:", responseData);
         setFormSucess(true);
         setFormData({
           name: "",
@@ -147,8 +161,29 @@ export default function ContactSection() {
           phone: "",
           detail: "",
         });
+        // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
+      }else{
+
+        alert("Submission failed: " + (responseData.message || "Please try again later."));
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          detail: "",
+        });
+         if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Network error during submission:", error);
+       if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
+    }
   };
 
   return (
@@ -219,6 +254,7 @@ export default function ContactSection() {
                       Full Name
                     </label>
                     <input
+                      required
                       type="text"
                       name="name"
                       onChange={handleChange}
@@ -233,6 +269,7 @@ export default function ContactSection() {
                           Email Address
                         </label>
                         <input
+                         required
                           type="email"
                           name="email"
                           onChange={handleChange}
@@ -256,7 +293,9 @@ export default function ContactSection() {
                         />
                       </div>
                     </div>
-
+                                  <div className="flex justify-center py-4">
+    <Recaptcha onVerify={setRecaptchaToken} />
+  </div>
                     <div>
                       <div className="flex justify-center">
                         {/* <GreenButton
@@ -275,6 +314,7 @@ export default function ContactSection() {
                         </button>
                       </div>
                     </div>
+        
                   </form>
                 </div>
               </div>
