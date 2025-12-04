@@ -35,7 +35,7 @@ export default function Footer() {
 
               <WhiteButton
                 text="Get In Touch"
-                linkurl="/Contact-Us"
+                linkurl="/contact-us"
                 linktarget=""
                 MoveRighticon={false}
               />
@@ -96,7 +96,7 @@ export default function Footer() {
                     { label: "Clients", href: "/About/Clients" },
                     { label: "Portfolio", href: "/About/Portfolio" },
                     {
-                      label: "Privacy & Policy",
+                      label: "Privacy Policy",
                       href: "https://www.logzerotechnologies.com/privacy-policy/",
                     },
                   ].map((item, index) => (

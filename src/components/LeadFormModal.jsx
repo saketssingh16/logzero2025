@@ -22,8 +22,8 @@ export default function LeadFormModal() {
   const dateInputRef = useRef(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionStatus, setSubmissionStatus] = useState(null); // 'success', 'error', null
-  const [errorMessage, setErrorMessage] = useState(""); // Detailed error message
+  const [submissionStatus, setSubmissionStatus] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const defaultServices = useMemo(
     () => [
@@ -78,8 +78,8 @@ export default function LeadFormModal() {
   const minDateTime = useMemo(() => {
     const dt = new Date();
 
-    dt.setDate(dt.getDate() + 1); // Advance day
-    dt.setHours(0, 0, 0, 0); // Set time to 00:00:00
+    dt.setDate(dt.getDate() + 1);
+    dt.setHours(0, 0, 0, 0);
 
     const yyyy = dt.getFullYear();
     const mm = String(dt.getMonth() + 1).padStart(2, "0");
@@ -375,7 +375,6 @@ export default function LeadFormModal() {
                 />
               </div>
             </div>
-
             {/* Service select */}
             <div>
               <label className="subheading-3 mb-2 flex items-center">

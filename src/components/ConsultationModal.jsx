@@ -64,11 +64,7 @@ export default function ConsultationModal() {
             className="input min-h-28"
             placeholder="Briefly describe your project (Optional)"
           />
-          <input
-            className="input"
-            placeholder="Preferred Time (dd-mm-yyyy --:--)"
-            required
-          />
+          <input className="input" type="datetime-local" step={1800} required />
           <select className="input" required defaultValue="">
             <option value="" disabled>
               -- How did you hear about us? --

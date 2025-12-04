@@ -117,7 +117,7 @@ export default function UI() {
         BtnPrimary={true}
         playiconyes={true}
         buttonText="Get a Free Consultation "
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo="View Our Work"
         buttonlinkurlTwo="/"
@@ -126,7 +126,7 @@ export default function UI() {
         KeyFeatures={false}
         keyFeaturesList={false}
         servicesOptions={services}
-        bannerimage="/assets/img/Transform Your Digital Experience with Expert UI Design-heroSection.webp"
+        bannerimage="/assets/img/UI-Design-HeroSection.webp"
         nostats={[]}
       />
 
@@ -387,7 +387,7 @@ to create exceptional user experiences."
         <CTA
           title="Ready to Transform Your Digital Presence?"
           description="Let's discuss how our unique approach to UI design can help elevate your brand and create meaningful user experiences that drive business growth."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Start Your Project Today"
         />

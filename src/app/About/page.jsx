@@ -101,7 +101,7 @@ export default function AboutUs() {
         buttonLink="/services"
         buttonTarget=""
         buttonTextTwo="Join Our Team"
-        buttonlinkurlTwo="/Contact-Us"
+        buttonlinkurlTwo="/contact-us"
         buttonlinktargetTw=""
         isocertified={false}
         KeyFeatures={false}

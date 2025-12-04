@@ -209,7 +209,7 @@ export default function Global() {
         addCounterNo={true}
         BtnPrimary={false}
         buttonText="Get Your Free Consultation Today"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo="Explore Our Services"
         buttonlinkurlTwo="/services"
@@ -276,7 +276,7 @@ export default function Global() {
         <CTA
           title="Ready to Transform Your Business?"
           description="Join hundreds of satisfied clients across the globe who trust LogZero Technologies."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Start Your Project Today"
         />
@@ -368,7 +368,7 @@ export default function Global() {
         <CTA
           title="Need a Custom Solution?"
           description="Let's discuss your unique requirements and build something amazing together"
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Get some Quote"
         />
@@ -428,7 +428,7 @@ export default function Global() {
         <CTA
           title="Don’t See Your Industry?"
           description="We work with businesses across all sectors. Let's discuss your specific needs."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Contact Us Today"
         />

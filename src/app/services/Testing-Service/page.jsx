@@ -70,7 +70,7 @@ export default function UxServices() {
         addCounterNo={true}
         BtnPrimary={true}
         buttonText="Get Your Free Test Consultation"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo=""
         buttonlinkurlTwo="/"
@@ -250,7 +250,7 @@ export default function UxServices() {
           title="Ready to Experience These Benefits?"
           description="Join hundreds of companies that trust LogZero for their 
 testing needs"
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Start Your Free Consultation"
         />

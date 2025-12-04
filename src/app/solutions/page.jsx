@@ -158,7 +158,7 @@ export default function data() {
         BtnPrimary={true}
         playiconyes={true}
         buttonText="Book a Free Solutions Consultation "
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo="Explore Case Studies"
         buttonlinkurlTwo="/"
@@ -526,12 +526,7 @@ export default function data() {
       <section className="py-16 px-6">
         <div className="container mx-auto">
           <div className="text-center">
-            <h2 className="">What Clients Need for Exceptional UI Design</h2>
-            <p className="text-center mx-auto max-w-[70%] mt-3">
-              Our approach blends innovative design, technical skill, and
-              strategic insight to produce user interfaces that are visually
-              appealing and effectively enhance business outcomes.
-            </p>
+            <h2 className="">What Makes Our Solutions Different</h2>
           </div>
           <div className="p-3 ">
             <div className="flex justify-between flex-wrap gap-0 max-w-[1100px] mx-auto mt-[100px]">

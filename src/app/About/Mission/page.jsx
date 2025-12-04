@@ -83,7 +83,7 @@ export default function Mission() {
         BtnPrimary={true}
         playiconyes={true}
         buttonText="Work With Us"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo=""
         buttonlinkurlTwo="/"

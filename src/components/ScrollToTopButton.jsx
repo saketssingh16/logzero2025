@@ -33,7 +33,7 @@ export default function ScrollToTopButton() {
       {isVisible && (
         <div
           onClick={scrollToTop}
-          className="fixed bluenew  textcolor w-14 h-14 rounded-full bottom-10 right-10 z-50 cursor-pointer flex items-center justify-center hover:bg-[#4ab095]  transition-transform hover:scale-104"
+          className="fixed bluenew  textcolor w-14 h-14 rounded-full bottom-10 right-10 z-50 cursor-pointer flex items-center justify-center hover:bg-[#4ab095] transition-transform hover:scale-104"
         >
           <ChevronUp size={30} />
         </div>

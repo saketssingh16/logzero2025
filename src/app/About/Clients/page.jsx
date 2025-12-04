@@ -86,7 +86,7 @@ export default function client() {
         BtnPrimary={true}
         playiconyes={false}
         buttonText="Get Started Today"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo=""
         buttonlinkurlTwo=""

@@ -200,7 +200,7 @@ const Services = () => {
         addCounterNo={true}
         BtnPrimary={true}
         buttonText="Request a Strategy Session"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         playiconyes={true}
         buttonTextTwo="See Our Work"
@@ -518,7 +518,7 @@ const Services = () => {
           title="Experience The LogZero Difference"
           description="Join hundreds of satisfied clients who chose excellence. Let’s build
           something amazing together."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Start Your Project"
         />
