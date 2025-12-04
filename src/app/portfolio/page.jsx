@@ -69,7 +69,7 @@ export default function Portfolio() {
         addCounterNo={true}
         BtnPrimary={true}
         buttonText="Get Started Today"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo=""
         buttonlinkurlTwo="/"

@@ -112,7 +112,7 @@ export default function IndustryWeServe() {
         addCounterNo={true}
         BtnPrimary={true}
         buttonText="Request a Consultation"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo="Call Us Today"
         buttonlinkurlTwo="/"
@@ -312,7 +312,7 @@ export default function IndustryWeServe() {
 
           <div className="flex-shrink-0 mr-7">
             <Link
-              href="/Contact-Us"
+              href="/contact-us"
               className="inline-block bluenew text-white font-semibold text-[15px] leading-[22px] font-inter px-[24px] py-[17px] rounded-full transition-all duration-300 hover:bg-[#4FB79C]  hover:shadow-md transition-transform hover:scale-107"
             >
               Share Your Industry Requirements

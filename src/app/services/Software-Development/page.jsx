@@ -290,7 +290,7 @@ export default function Mission() {
         BtnPrimary={true}
         playiconyes={true}
         buttonText="Get Your Free Software Consultation Today!"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo=""
         buttonlinkurlTwo="/"
@@ -631,7 +631,7 @@ export default function Mission() {
           <div className="flex justify-center mt-10">
             <GreenButton
               text="Start Your Software Development Journey Today"
-              linkurl="/Contact-Us"
+              linkurl="/contact-us"
               linktarget=""
               MoveRighticon={false}
             />
@@ -782,7 +782,7 @@ export default function Mission() {
         <CTA
           title="Need a Custom Quote?"
           description="Every business is unique. If none of our standard packages fit your specific requirements, we'd be happy to create a custom solution tailored just for you."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Get Custom Quote Schedule Consultation"
         />
@@ -1028,7 +1028,7 @@ export default function Mission() {
         <CTA
           title="Still Have Questions?"
           description="Our team of experts is here to help answer any specific questions about your project and provide personalized recommendations for your software development needs."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Contact Our Experts"
         />

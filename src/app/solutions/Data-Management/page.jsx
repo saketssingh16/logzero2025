@@ -150,7 +150,7 @@ export default function data() {
         BtnPrimary={true}
         playiconyes={true}
         buttonText="Book Your Free Data Audit Today "
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo=""
         buttonlinkurlTwo="/"

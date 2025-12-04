@@ -223,7 +223,7 @@ export default function CloudServices() {
         addCounterNo={true}
         BtnPrimary={true}
         buttonText="Get Your Free Cloud Consultation Today!"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo="Watch Demo"
         buttonlinkurlTwo="/"

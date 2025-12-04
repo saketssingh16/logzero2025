@@ -111,7 +111,7 @@ export default function DeveloperForHire() {
         addCounterNo={true}
         isocertified={false}
         buttonText="Hire a Developer Today"
-        buttonLink={"/Contact-Us"}
+        buttonLink={"/contact-us"}
         BtnPrimary={true}
         buttonTarget=""
         bannerimage="/assets/img/developer-banner.svg"
@@ -184,7 +184,7 @@ export default function DeveloperForHire() {
 
           <div className="flex-shrink-0 pr-6">
             <Link
-              href="/Contact-Us"
+              href="/contact-us"
               className="inline-block bluenew text-white font-semibold text-[15px] leading-[22px] font-inter px-[24px] py-[17px] rounded-full transition-all duration-300 hover:bg-[#1E8767] hover:text-white hover:shadow-md transition-transform hover:scale-107"
             >
               Start Your Project
@@ -397,7 +397,7 @@ export default function DeveloperForHire() {
         <CTA
           title="Still Unsure?"
           description="Reach out to us for a consultation, and we'll help you determine the best hiring model based on your business needs."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Get Free Consultation"
         />
@@ -658,7 +658,7 @@ export default function DeveloperForHire() {
           title="Ready to Experience These Benefits?"
           description="Join hundreds of companies that have successfully scaled their development teams 
 with our expert developers."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Start Your Project Today"
         />

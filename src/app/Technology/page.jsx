@@ -87,7 +87,7 @@ export default function solutions() {
         addCounterNo={true}
         BtnPrimary={true}
         buttonText="Get Started Today"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo=""
         buttonlinkurlTwo="/"

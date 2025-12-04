@@ -99,7 +99,7 @@ export default function Service() {
         BtnPrimary={true}
         playiconyes={true}
         buttonText="Get Your Free Consultation Today!"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo="See Our Work"
         buttonlinkurlTwo="/"
@@ -515,7 +515,7 @@ export default function Service() {
       <p className="text-lg text-gray-800 text-center">
         Need a custom solution?{' '}
         <Link
-          href="/Contact-Us"
+          href="/contact-us"
           className="text-teal-500 hover:text-teal-600 transition-colors duration-200"
         >
           [Contact us]
@@ -531,7 +531,7 @@ export default function Service() {
         <CTA
           title="Let's Get Started on Your Project!"
           description="Whether you're a startup looking to launch a website or an enterprise in need of cloud solutions, we have the expertise to bring your ideas to life. Contact us today to schedule your consultation."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Get Free Quote"
         />

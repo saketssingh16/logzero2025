@@ -157,7 +157,7 @@ export default function ContactSection() {
       <section className="pt-16 px-6 bg-[#F2F9F7DB]/86">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr_1.2fr] gap-4 ">
-            <div className="space-y-4 mr-8  md:mt-14">
+            <div className="space-y-4 mr-8  md:mt-[26px]">
               {[
                 {
                   icon: <Zap size={32} className="" />,

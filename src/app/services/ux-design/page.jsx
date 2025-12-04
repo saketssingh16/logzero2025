@@ -140,7 +140,7 @@ export default function UxServices() {
         addCounterNo={true}
         BtnPrimary={true}
         buttonText="Get a Free UX Consultation"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo="Watch Demo"
         buttonlinkurlTwo="/"

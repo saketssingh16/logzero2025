@@ -312,7 +312,7 @@ export default function MobileDevelopment() {
         addCounterNo={true}
         BtnPrimary={true}
         buttonText="Request Free Consultation"
-        buttonLink="/Contact-Us"
+        buttonLink="/contact-us"
         buttonTarget=""
         buttonTextTwo="Watch Demo"
         buttonlinkurlTwo="/"
@@ -491,7 +491,7 @@ export default function MobileDevelopment() {
         <CTA
           title="Don’t Let These Issues Hold Back Your Success"
           description="Partner with LogZero Technologies to overcome these challenges and deliver exceptional mobile experiences."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Start Your Project Today"
         />
@@ -644,7 +644,7 @@ export default function MobileDevelopment() {
         <CTA
           title="Ready to Start Your Project?"
           description="Let’s discuss your requirements and create a custom development plan that fits your timeline and budget."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           linkText="Schedule Free Consultation"
           linkUrl2="/About/Portfolio"
           linkText2="View Our Portfolio"
@@ -769,7 +769,7 @@ export default function MobileDevelopment() {
         <CTA
           title="Ready to join our success stories?"
           description="Let’s discuss how we can help you create a mobile app that your customers will love and that drives real business results."
-          linkUrl="/Contact-Us"
+          linkUrl="/contact-us"
           ctabtnType="primary"
           linkText="Get your free consultation"
         />
