@@ -14,11 +14,13 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { useModal } from "@/context/ModalContext";
-
+import Recaptcha from "./Recaptcha";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 export default function LeadFormModal() {
   const { open, payload, closeModal } = useModal();
   const servicesFromPayload = payload?.servicesOptions || null;
-
+ const [recaptchaToken, setRecaptchaToken] = useState(null);  
   const dateInputRef = useRef(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,27 +92,97 @@ export default function LeadFormModal() {
     return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
   }, [open]);
 
+  const minDateObj = useMemo(() => new Date(minDateTime), [minDateTime]);
+
   if (!open) return null;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "consultationDateTime") {
+      if (!value) {
+        setFormData((s) => ({ ...s, consultationDateTime: "" }));
+        return;
+      }
       const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return;
+      }
       const day = date.getDay();
 
       if (day === 0 || day === 6) {
         alert("Weekends are not available. Please choose a weekday.");
         return;
       }
+
+      const snapped = snapToHalfHour(date);
+      setFormData((s) => ({
+        ...s,
+        consultationDateTime: formatDateToInputValue(snapped),
+      }));
+      return;
     }
 
     setFormData((s) => ({ ...s, [name]: value }));
   };
 
+  const formatDateToInputValue = (date) => {
+    const pad = (num) => String(num).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  };
+
+  const snapToHalfHour = (date) => {
+    const snapped = new Date(date);
+    const minutes = snapped.getMinutes();
+    const roundedMinutes = minutes < 30 ? 0 : 30;
+    snapped.setMinutes(roundedMinutes, 0, 0);
+    return snapped;
+  };
+
+  const handleDatePickerChange = (date) => {
+    if (!date) {
+      setFormData((s) => ({ ...s, consultationDateTime: "" }));
+      return;
+    }
+
+    const day = date.getDay();
+    if (day === 0 || day === 6) {
+      alert("Weekends are not available. Please choose a weekday.");
+      return;
+    }
+
+    const snapped = snapToHalfHour(date);
+    setFormData((s) => ({
+      ...s,
+      consultationDateTime: formatDateToInputValue(snapped),
+    }));
+  };
+
+  const filterTime = (time) => {
+    if (!minDateObj) return true;
+    const sameDate =
+      time.getFullYear() === minDateObj.getFullYear() &&
+      time.getMonth() === minDateObj.getMonth() &&
+      time.getDate() === minDateObj.getDate();
+
+    if (!sameDate) return true;
+    return time.getTime() >= minDateObj.getTime();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+   // 1. Find the reCAPTCHA response token
+    // The reCAPTCHA widget inserts a hidden input field named 'g-recaptcha-response'
+    const recaptchaTokenField = document.querySelector('[name="g-recaptcha-response"]');
+    const recaptchaToken = recaptchaTokenField ? recaptchaTokenField.value : null;
 
+    if (!recaptchaToken) {
+        alert("Please complete the reCAPTCHA verification.");
+        // Optional: If you are using explicit rendering, you might need to reset/re-render the widget here.
+        return; 
+    }
     if (
       !formData.fullName ||
       !formData.Email ||
@@ -137,6 +209,7 @@ export default function LeadFormModal() {
       pref_time: formData.consultationDateTime,
       project_desc: formData.projectDescription,
       origin: formData.hearAboutUs,
+      'g-recaptcha-response': recaptchaToken,
     };
 
     try {
@@ -166,19 +239,33 @@ export default function LeadFormModal() {
           consultationDateTime: "",
           hearAboutUs: "",
         });
+        
         alert("Your form has been submitted successfully.");
+         // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
       } else {
         setSubmissionStatus("error");
         const serverError =
           responseData.message || responseData.error || "Unknown server error.";
         setErrorMessage(`Submission failed: ${serverError}`);
         console.error("API submission failed:", response.status, serverError);
+        // alert(`Form submission failed: ${response.message}`);
+         // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
       }
     } catch (err) {
       setSubmissionStatus("error");
       setErrorMessage(
         "A network error occurred. Please check your connection."
       );
+       // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
       console.error("Network or fetch error:", err);
     } finally {
       setIsSubmitting(false);
@@ -327,7 +414,7 @@ export default function LeadFormModal() {
                   Preferred Time for Consultation{" "}
                   <span className="text-red-500 ml-1">*</span>
                 </label>
-                <input
+                {/* <input
                   ref={dateInputRef}
                   type="datetime-local"
                   name="consultationDateTime"
@@ -348,6 +435,28 @@ export default function LeadFormModal() {
                     }
                   }}
                   className="w-full mt-2 px-4 py-2.5 border cursor-pointer border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5BC2A7] outline-none transition-all"
+                /> */}
+                <DatePicker
+                  selected={
+                    formData.consultationDateTime
+                      ? new Date(formData.consultationDateTime)
+                      : null
+                  }
+                  onChange={handleDatePickerChange}
+                  showTimeSelect
+                  timeIntervals={30}
+                  minDate={minDateObj}
+                  filterDate={(date) => {
+                    const day = date.getDay();
+                    return day !== 0 && day !== 6;
+                  }}
+                  filterTime={filterTime}
+                  dateFormat="dd MMM yyyy, h:mm aa"
+                  placeholderText="Select date & time (30 min slots)"
+                  wrapperClassName="datepicker-full"
+                  className="w-full mt-2 px-4 py-2.5 border cursor-pointer border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5BC2A7] outline-none transition-all bg-white"
+                  calendarClassName="!text-black"
+                  popperPlacement="bottom-start"
                 />
               </div>
             </div>
@@ -440,7 +549,11 @@ export default function LeadFormModal() {
                 <option value="other">Other</option>
               </select>
             </div>
-
+              
+              {/* captcha field */}
+                                       <div className="flex justify-center py-4">
+    <Recaptcha onVerify={setRecaptchaToken} />
+  </div>
             {/* Submit */}
             <div className="pt-4">
               <button
