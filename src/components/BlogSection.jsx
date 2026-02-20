@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MdOutlineArrowRight } from "react-icons/md";
 import api from "@/lib/api";
+import { BLOG_CATEGORY_SLUG_BY_ID, CATEGORY_IDS } from "@/lib/categoryIds";
 
 const featuredImage = "/assets/img/featuredImage.webp";
 const popularPostImage = "/assets/img/popularPostImg.webp";
@@ -13,17 +14,22 @@ const ladderImg = "/assets/img/ladderImg.webp";
 const dentalImage1 = "https://placehold.co/100x100/C8E6C9/388E3C?text=Dental+Health";
 const dentalImage2 = "https://placehold.co/100x100/A5D6A7/000000?text=Dental+Wellness";
 const SearchOfCategory = [
-  { id: 1, title: "Dev", color: "#FFEDEC", iconBg: "#F9E4E3", icon: Code, iconColor: "#7D2F2B" },
-  { id: 2, title: "Digital Solutions", color: "#F7EBFF", icon: Bolt, iconBg: "#ECDDF6", iconColor: "#60387A" },
-  { id: 3, title: "DevOps", color: "#ECF1FF", icon: Server, iconBg: "#E0E7FB", iconColor: "#354571" },
-  { id: 4, title: "Design", color: "#D8F9F3", icon: Diamond, iconBg: "#BBE4DD", iconColor: "#256D5B" },
-  { id: 5, title: "Docs", color: "#FFF3CB", icon: FileText, iconBg: "#F9E4E3", iconColor: "#9F8A47" },
+  { id: CATEGORY_IDS.BLOG_DEV, title: "Dev", color: "#FFEDEC", iconBg: "#F9E4E3", icon: Code, iconColor: "#7D2F2B" },
+  { id: CATEGORY_IDS.BLOG_DIGITAL_SOLUTIONS, title: "Digital Solutions", color: "#F7EBFF", icon: Bolt, iconBg: "#ECDDF6", iconColor: "#60387A" },
+  { id: CATEGORY_IDS.BLOG_DEVOPS, title: "DevOps", color: "#ECF1FF", icon: Server, iconBg: "#E0E7FB", iconColor: "#354571" },
+  { id: CATEGORY_IDS.BLOG_DESIGN, title: "Design", color: "#D8F9F3", icon: Diamond, iconBg: "#BBE4DD", iconColor: "#256D5B" },
+  { id: CATEGORY_IDS.BLOG_DOCS, title: "Docs", color: "#FFF3CB", icon: FileText, iconBg: "#F9E4E3", iconColor: "#9F8A47" },
 ];
 
 const getDevPostHref = (post) => {
-  const identifier = post?.id ?? post?.slug ?? "";
-  if (!identifier) return "/blog/blogDetails";
-  return `/blog/blogDetails?id=${encodeURIComponent(identifier)}`;
+   const slug = post?.slug;
+   if (slug) return `/blog/${encodeURIComponent(slug)}`;
+
+   // fallback if slug missing
+  const id = post?.id;
+  if (id) return `/blog/blogDetails?id=${encodeURIComponent(id)}`;
+  
+   return "/blog";
 };
 
 const ChevronRightIcon = (props) => (
@@ -260,12 +266,19 @@ export default function App() {
   const getFeaturedImageSrc = (post) => {
     if (!post) return featuredImage;
     // Use base64 if present, otherwise fallback to featuredImage or default
-    return post.featuredImageBase64 || post.featuredImage || featuredImage;
+    return (
+      post.featuredImageBase64 || post.featuredImage || post.imageUrl || featuredImage
+    );
   };
 
   const getCol2ImageSrc = (post) => {
-    // prefer a local default image when post has no image
-    return post?.featuredImage || "/assets/img/featuredImage2.webp";
+    // Prefer base64 > featuredImage > imageUrl; otherwise a local default image
+    return (
+      post?.featuredImageBase64 ||
+      post?.featuredImage ||
+      post?.imageUrl ||
+      "/assets/img/featuredImage2.webp"
+    );
   };
 
   const getPopularImageSrc = (post) => {
@@ -422,7 +435,16 @@ export default function App() {
                 <div className="relative">
                   <img
                     src={getFeaturedImageSrc(featuredPost)}
-                    alt={featuredPost.metaTitle || "Featured"}
+                    alt={
+                      featuredPost?.featuredImageBase64 ||
+                      featuredPost?.featuredImage ||
+                      featuredPost?.imageUrl
+                        ? featuredPost.featuredImageDesc ||
+                          featuredPost.metaTitle ||
+                          featuredPost.title ||
+                          "Featured"
+                        : ""
+                    }
                     className="w-full h-48 object-cover rounded rounded-[4px]"
                   />
                   {/* <span className="absolute bottom-4 right-4 px-3 py-2 bg-[#1E8767] text-white text-sm font-medium rounded-lg shadow-md">
@@ -467,7 +489,11 @@ export default function App() {
                 <div className="flex-shrink-0">
                   <img
                     src={getCol2ImageSrc(post)}
-                    alt={post.metaTitle}
+                    alt={
+                      post?.featuredImageBase64 || post?.featuredImage || post?.imageUrl
+                        ? post.featuredImageDesc || post.metaTitle || post.title || "Post image"
+                        : ""
+                    }
                     className="object-cover rounded-[2px]"
                   />
                 </div>
@@ -564,11 +590,11 @@ export default function App() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {SearchOfCategory.map((category) => {
               const IconComponent = category.icon;
-              const slug = category.title.toLowerCase().replace(/\s+/g, "-");
+              const categorySlug = BLOG_CATEGORY_SLUG_BY_ID[category.id] ?? String(category.id);
               return (
                 <Link
                   key={category.id}
-                  href={`/blog/category/${slug}`}
+                  href={`/blog/category/${categorySlug}`}
                   className="flex flex-col items-center p-4 rounded-lg hover:shadow-lg transition"
                   style={{ backgroundColor: category?.color }}
                 >
@@ -610,7 +636,11 @@ export default function App() {
                   <div className="relative">
                     <img
                       src={getPopularImageSrc(post)}
-                      alt={getPopularTitle(post)}
+                      alt={
+                        post?.featuredImageBase64 || post?.featuredImage || post?.imageUrl
+                          ? post?.featuredImageDesc || getPopularTitle(post) || "Post image"
+                          : ""
+                      }
                       className="w-full h-48 object-cover rounded-[4px]"
                     />
                     <span className="absolute bottom-4 right-4 px-3 py-2 bg-[#1E8767] text-white text-sm font-medium rounded-lg shadow-md">
@@ -633,7 +663,7 @@ export default function App() {
                 <div className="relative">
                   <img
                     src={popularPostImage}
-                    alt="Popular posts coming soon"
+                    alt=""
                     className="w-full h-48 object-cover rounded-[4px]"
                   />
                   <span className="absolute bottom-4 right-4 px-3 py-2 bg-[#1E8767] text-white text-sm font-medium rounded-lg shadow-md">
@@ -708,7 +738,11 @@ export default function App() {
                       <div className="relative">
                         <img
                           src={getPopularImageSrc(post)}
-                          alt={getPopularTitle(post)}
+                          alt={
+                            post?.featuredImageBase64 || post?.featuredImage || post?.imageUrl
+                              ? post?.featuredImageDesc || getPopularTitle(post) || "Post image"
+                              : ""
+                          }
                           className="w-full h-48 object-cover rounded-[4px]"
                         />
                         <span className="absolute bottom-4 right-4 px-3 py-2 bg-[#1E8767] text-white text-sm font-medium rounded-lg shadow-md">
@@ -731,7 +765,7 @@ export default function App() {
                 <div className="relative">
                   <img
                     src={popularPostImage}
-                    alt="Popular posts coming soon"
+                    alt=""
                     className="w-full h-48 object-cover rounded-[4px]"
                   />
                   <span className="absolute bottom-4 right-4 px-3 py-2 bg-[#1E8767] text-white text-sm font-medium rounded-lg shadow-md">

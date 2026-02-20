@@ -22,7 +22,7 @@ const formatIsoDate = (isoValue) => {
   }
 };
 
-export default function BlogDetailsClient() {
+export default function BlogDetailsClient({ identifier }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [post, setPost] = useState(null);
@@ -33,17 +33,27 @@ export default function BlogDetailsClient() {
   useEffect(() => {
     const controller = new AbortController();
 
+    const isCancelError = (err) =>
+      err?.name === "CanceledError" ||
+      err?.name === "AbortError" ||
+      err?.code === "ERR_CANCELED";
+
+    const postIdOrSlug = identifier ?? searchParams.get("id");
+    // When navigating to the slug route, identifier can briefly be undefined during hydration.
+    // Keep showing the loading skeleton until we have an identifier.
+    if (!postIdOrSlug) {
+      setLoading(true);
+      setError("");
+      setPost(null);
+      return () => controller.abort();
+    }
+
     const fetchPost = async () => {
+      let canceled = false;
       setLoading(true);
       setError("");
       try {
-        const postId = searchParams.get("id") || "109";
-        if (!postId) {
-          setError("Missing post id");
-          setPost(null);
-          return;
-        }
-        const { data: payload } = await api.get(`/posts/${postId}`, {
+        const { data: payload } = await api.get(`/posts/${encodeURIComponent(postIdOrSlug)}`, {
           signal: controller.signal,
         });
         const data = payload?.data ?? null;
@@ -54,24 +64,32 @@ export default function BlogDetailsClient() {
         }
         setPost(data);
       } catch (err) {
-        if (err.name === "CanceledError" || err.name === "AbortError" || err.code === "ERR_CANCELED") return;
+        if (isCancelError(err)) {
+          canceled = true;
+          return;
+        }
         const apiMessage = err?.response?.data?.message || err?.message;
         setError(apiMessage || "Unable to load post");
         setPost(null);
       } finally {
-        setLoading(false);
+        if (!canceled) setLoading(false);
       }
     };
 
     fetchPost();
     return () => controller.abort();
-  }, [searchParams]);
+  }, [searchParams, identifier]);
 
   
 
   const imageSrc =
     post?.featuredImageBase64?.trim() || post?.featuredImage || DEFAULT_DETAILS_IMAGE;
-  const dateLabel = post?.publishedAt || post?.createdAt || post?.updatedAt;
+  const dateLabel =
+    post?.publishedAt ||
+    post?.createdAt ||
+    post?.created_at ||
+    post?.updatedAt ||
+    post?.updated_at;
   const formattedDate = formatIsoDate(dateLabel);
   const contentBlocks = Array.isArray(post?.content?.blocks)
     ? post.content.blocks.filter((block) => block?.data?.text)
@@ -111,7 +129,11 @@ export default function BlogDetailsClient() {
               <div className="relative h-[420px] w-full bg-gray-100">
                 <img
                   src={imageSrc}
-                  alt={post.metaTitle ?? "Blog post image"}
+                  alt={
+                    post?.featuredImageBase64?.trim() || post?.featuredImage
+                      ? post?.featuredImageDesc || post?.metaTitle || "Blog post image"
+                      : ""
+                  }
                   className="h-full w-full object-cover"
                 />
               </div>

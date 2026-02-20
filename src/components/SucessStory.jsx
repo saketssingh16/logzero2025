@@ -53,12 +53,15 @@ const normalizeCaseStudy = (study = {}, fallbackImage) => {
         .filter(Boolean)
     : [];
 
-  // Prefer id-based blog details route; fall back to slug as query if id missing.
-  const linkFromSlugOrId = study.id
-    ? `/blog/blogDetails?id=${encodeURIComponent(study.id)}`
-    : study.slug
-      ? `/blog/blogDetails?id=${encodeURIComponent(study.slug)}`
-      : "#";
+  // Prefer case-studies dynamic route; fall back to id if slug missing.
+  const slugOrId = study.slug ?? study.id;
+  const linkFromSlugOrId = slugOrId
+    ? `/case-studies/${encodeURIComponent(slugOrId)}`
+    : "#";
+
+  const hasRealImage = Boolean(
+    study.featuredImageBase64 || study.image || study.featuredImage
+  );
 
   return {
     id: study.id ?? study.slug ?? study.title,
@@ -72,6 +75,8 @@ const normalizeCaseStudy = (study = {}, fallbackImage) => {
     technologies,
     image: study.image || study.featuredImage || fallbackImage,
     featuredImageBase64: study.featuredImageBase64,
+    featuredImageDesc: study.featuredImageDesc || "",
+    hasRealImage,
     width: study.width || 564,
     height: study.height || 383,
     link: study.link || linkFromSlugOrId,
@@ -138,13 +143,21 @@ export default function SuccessStory({
 
         setFetchedStudies(normalized);
       } catch (err) {
-        if (err.name !== "AbortError") {
-          console.error("Case studies load error", err);
-          setError(err.message || "Unable to load case studies");
-          setFetchedStudies([]);
-        }
+        const isCanceled =
+          controller.signal.aborted ||
+          err?.name === "AbortError" ||
+          err?.name === "CanceledError" ||
+          err?.code === "ERR_CANCELED";
+
+        if (isCanceled) return;
+
+        console.error("Case studies load error", err);
+        setError(err?.message || "Unable to load case studies");
+        setFetchedStudies([]);
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -201,7 +214,7 @@ export default function SuccessStory({
               <CaseStudyImage
                 src={study.image}
                 base64={study.featuredImageBase64}
-                alt={study.title}
+                alt={study.hasRealImage ? (study.featuredImageDesc || study.title) : ""}
                 width={study.width}
                 height={study.height}
                 className="rounded-[10px] shadow-[0_4px_20px_rgba(0,0,0,0.05)] w-full h-auto object-cover transition-transform duration-300 ease-in-out hover:translate-y-[-5px]"
@@ -314,11 +327,7 @@ export default function SuccessStory({
               {/* Link */}
               <div className="mt-8">
                 <Link
-                  href={
-                    study.id || study.slug
-                      ? `/blog/blogDetails?id=${encodeURIComponent(study.id || study.slug)}`
-                      : study.link || "#"
-                  }
+                  href={study.link || "#"}
                   className="subheading-3 textbluenew inline-flex items-center gap-1 transition-transform duration-300 ease-in-out hover:translate-x-[5px] hover:!text-[#1F1F1F]"
                 >
                   Read Full Case Study <ChevronRight size={18} />

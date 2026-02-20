@@ -42,6 +42,7 @@ export default function AddPostPage() {
   // ✅ Use ref to avoid stale closures
   const formRef = useRef({
     metaTitle: "",
+    slug: "",
     metaDescription: "",
     author: "",
     popular: false,
@@ -60,6 +61,7 @@ export default function AddPostPage() {
     editorHtml: "<p></p>",
     featuredImageFile: null,
     featuredImageBase64: "",
+    featuredImageDesc: "",
   });
 
   const [form, setForm] = useState(formRef.current);
@@ -86,6 +88,18 @@ export default function AddPostPage() {
 
   const handleBasicChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "type") {
+      const nextType = value;
+      setForm((prev) => ({
+        ...prev,
+        type: nextType,
+        popular: nextType === "case_study" ? false : prev.popular,
+      }));
+      setDirty(true);
+      return;
+    }
+
     setForm((prev) => ({ ...prev, [name]: value }));
     setDirty(true);
   };
@@ -266,13 +280,23 @@ export default function AddPostPage() {
       status: statusOverride ?? currentForm.status,
       content: contentBlocks,
       solutionIds: currentForm.solutionIds || [],
-      popular: currentForm.popular || false,
+      popular: currentForm.type === "blog_post" ? currentForm.popular || false : false,
       indexValue: currentForm.indexValue ?? true,
     };
+
+    const trimmedSlug = (currentForm.slug || "").trim();
+    if (trimmedSlug) {
+      payload.slug = trimmedSlug;
+    }
 
     // ✅ Only include featuredImageBase64 if it exists
     if (currentForm.featuredImageBase64) {
       payload.featuredImageBase64 = currentForm.featuredImageBase64;
+    }
+
+    const trimmedFeaturedImageDesc = (currentForm.featuredImageDesc || "").trim();
+    if (trimmedFeaturedImageDesc) {
+      payload.featuredImageDesc = trimmedFeaturedImageDesc;
     }
 
     const formattedCreatedAt = formatCreatedAtValue(currentForm.created_at);
@@ -507,6 +531,20 @@ export default function AddPostPage() {
             </div>
 
             <div>
+              <label className="block text-sm mb-1">Slug (optional)</label>
+              <input
+                name="slug"
+                value={form.slug}
+                onChange={handleBasicChange}
+                className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
+                placeholder="Leave blank to auto-generate from meta title"
+              />
+              <p className="mt-1 text-xs text-gray-400">
+                Changing the slug won’t change the meta title.
+              </p>
+            </div>
+
+            <div>
               <label className="block text-sm mb-1">Meta description</label>
               <textarea
                 name="metaDescription"
@@ -532,21 +570,23 @@ export default function AddPostPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm mb-1">Popular</label>
-                  <button
-                    type="button"
-                    onClick={handleTogglePopular}
-                    aria-pressed={form.popular}
-                    className={`px-4 py-2 text-sm font-semibold rounded-full transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                      form.popular
-                        ? "bg-emerald-500 text-black"
-                        : "bg-zinc-800 text-gray-200"
-                    }`}
-                  >
-                    {form.popular ? "Popular" : "Mark popular"}
-                  </button>
-                </div>
+                {form.type === "blog_post" && (
+                  <div>
+                    <label className="block text-sm mb-1">Popular</label>
+                    <button
+                      type="button"
+                      onClick={handleTogglePopular}
+                      aria-pressed={form.popular}
+                      className={`px-4 py-2 text-sm font-semibold rounded-full transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                        form.popular
+                          ? "bg-emerald-500 text-black"
+                          : "bg-zinc-800 text-gray-200"
+                      }`}
+                    >
+                      {form.popular ? "Popular" : "Mark popular"}
+                    </button>
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm mb-1">Allow indexing</label>
@@ -693,13 +733,31 @@ export default function AddPostPage() {
             </div>
 
             <div>
-              <label className="block text-sm mb-1">Featured image</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFeaturedImageChange}
-                className="text-sm text-gray-400 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2"
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                <div>
+                  <label className="block text-sm mb-1">Featured image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFeaturedImageChange}
+                    className="w-full text-sm text-gray-400 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-1">
+                    Featured image alt text (optional)
+                  </label>
+                  <input
+                    name="featuredImageDesc"
+                    value={form.featuredImageDesc}
+                    onChange={handleBasicChange}
+                    className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
+                    placeholder="Describe the featured image for accessibility and SEO"
+                  />
+                </div>
+              </div>
+
               {form.featuredImageFile && (
                 <p className="text-xs text-gray-400 mt-1">
                   Selected: {form.featuredImageFile.name}

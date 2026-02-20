@@ -238,7 +238,8 @@ export default function ImageUploader({
             accept="image/jpeg,image/png,image/jpg,image/webp"
             onChange={onSelectFile}
             disabled={isLoading}
-            style={{ width: "100%" }}
+            className="border border-zinc-800  text-sm text-gray-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-3 py-2"
+            
           />
           <div
             style={{

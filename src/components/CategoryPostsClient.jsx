@@ -28,8 +28,17 @@ export default function CategoryPostsClient({ initialPosts = [], morePosts = [] 
           <div key={post.id} className="flex flex-col">
             <div className="relative">
               <img
-                src={post.featuredImage || "/assets/img/featuredImage.webp"}
-                alt={post.metaTitle || post.metaTitle}
+                src={
+                  post.featuredImageBase64 ||
+                  post.featuredImage ||
+                  post.imageUrl ||
+                  "/assets/img/featuredImage.webp"
+                }
+                alt={
+                  post?.featuredImageBase64 || post?.featuredImage || post?.imageUrl
+                    ? post?.featuredImageDesc || post?.metaTitle || post?.title || "Blog post image"
+                    : ""
+                }
                 className="w-full h-48 object-cover rounded-[4px]"
               />
               <span className="absolute bottom-4 right-4 px-3 py-2 bg-[#1E8767] text-white text-sm font-medium rounded-lg shadow-md">{post.blogCategory}</span>

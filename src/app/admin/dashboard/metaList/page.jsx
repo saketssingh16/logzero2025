@@ -28,6 +28,8 @@ const Page = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  const [categories, setCategories] = useState([]);
+
   // Search (Category detail by name)
   const [searchInput, setSearchInput] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
@@ -44,12 +46,35 @@ const Page = () => {
       setError("");
 
       try {
-        const { data } = await api.get(API_URL, { signal: controller.signal });
-        if (!data?.success || !Array.isArray(data?.data)) {
-          throw new Error("Unexpected response shape from categories API");
+        const [detailsRes, categoriesRes] = await Promise.all([
+          api.get(API_URL, { signal: controller.signal }),
+          api.get("/categories", { signal: controller.signal }),
+        ]);
+
+        const detailsData = detailsRes?.data;
+        if (!detailsData?.success || !Array.isArray(detailsData?.data)) {
+          throw new Error(
+            "Unexpected response shape from categories detail API"
+          );
         }
 
-        setItems(data.data);
+        const categoriesPayload = categoriesRes?.data;
+        const categoryRows = categoriesPayload?.data ?? categoriesPayload;
+        const categoryList = Array.isArray(categoryRows) ? categoryRows : [];
+        setCategories(categoryList);
+
+        const nameById = new Map(
+          categoryList
+            .filter((row) => row && typeof row === "object")
+            .map((row) => [row.id, row.name])
+        );
+
+        const enriched = detailsData.data.map((row) => ({
+          ...row,
+          categoryName: nameById.get(row?.categoryId) || row?.categoryName || "",
+        }));
+
+        setItems(enriched);
       } catch (err) {
         if (
           err.name === "CanceledError" ||
@@ -67,6 +92,16 @@ const Page = () => {
     load();
     return () => controller.abort();
   }, [refreshTick, isSearching]);
+
+  const categoryNameById = useMemo(() => {
+    const map = new Map();
+    for (const row of categories) {
+      if (!row || typeof row !== "object") continue;
+      if (row.id == null) continue;
+      map.set(row.id, row.name || "");
+    }
+    return map;
+  }, [categories]);
 
   useEffect(() => {
     setPage(1);
@@ -180,7 +215,16 @@ const Page = () => {
         return [];
       })();
 
-      setItems(rows);
+      const enriched = rows.map((row) => ({
+        ...row,
+        categoryName:
+          row?.categoryName ||
+          row?.category?.name ||
+          categoryNameById.get(row?.categoryId) ||
+          "",
+      }));
+
+      setItems(enriched);
       if (rows.length === 0) {
         setSearchError("No results found");
       }
@@ -332,7 +376,7 @@ const Page = () => {
                 <button
                   type="button"
                   onClick={handleSearchReset}
-                  className="shrink-0 inline-flex items-center justify-center h-10 px-3 rounded-md border border-neutral-800 bg-neutral-950 hover:bg-neutral-800 transition-colors text-sm"
+                  className="shrink-0 inline-flex items-center justify-center h-10 px-3 rounded-md border border-neutral-800 bg-neutral-950 hover:bg-neutral-800 transition-colors text-sm cursor-pointer"
                 >
                   Reset
                 </button>
@@ -360,7 +404,7 @@ const Page = () => {
                   <th className="w-[60px] px-4 py-3 text-left">S.No</th>
                   <th className="px-4 py-3 text-left">Meta Title</th>
                   <th className="px-4 py-3 text-left">Description</th>
-                  <th className="px-4 py-3 text-left">Custom Slug</th>
+                  <th className="px-4 py-3 text-left">Category Name</th>
                   <th className="w-[120px] px-4 py-3 text-right">Action</th>
                 </tr>
               </thead>
@@ -409,7 +453,7 @@ const Page = () => {
                   !tableError &&
                   visibleRows.map((row, idx) => (
                     <tr
-                      key={`${row.id}-${row.customSlug}-${idx}`}
+                      key={`${row.id}-${row.categoryId}-${idx}`}
                       className="border-b border-neutral-800/80 last:border-0 hover:bg-neutral-800/40"
                     >
                       <td className="px-4 py-3 align-top text-sm text-gray-300">
@@ -424,7 +468,7 @@ const Page = () => {
                         </span>
                       </td>
                       <td className="px-4 py-3 align-top text-sm text-emerald-300">
-                        {row.customSlug || "--"}
+                        {row.categoryName || row.category?.name || "--"}
                       </td>
                       <td className="px-4 py-3 align-top text-right">
                         <div className="flex items-center justify-end gap-3">
@@ -474,9 +518,10 @@ const Page = () => {
               >
                 Prev
               </button>
-              <span className="rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm font-semibold text-white">
-                Page {page} / {totalPages}
-              </span>
+              <span className="text-xs md:text-sm text-gray-400 whitespace-nowrap px-2">
+                  Page <span className="text-white font-bold">{page}</span> of{" "}
+                  {totalPages}
+                </span>
               <button
                 type="button"
                 onClick={() =>

@@ -12,15 +12,16 @@ import Link from "next/link";
 import { InlineGreenButton } from "@/components/InlineGreenButton";
 import CategoryPostsClient from "@/components/CategoryPostsClient";
 import api from "@/lib/api";
+import { BLOG_CATEGORY_SLUG_BY_ID, CATEGORY_IDS } from "@/lib/categoryIds";
 
 const devImg = "/assets/img/devImage.webp";
 
 const SearchOfCategory = [
-    { id: 1, title: "Dev", color: "#FFEDEC", iconBg: "#F9E4E3", icon: Code, iconColor: "#7D2F2B" },
-    { id: 2, title: "Digital Solutions", color: "#F7EBFF", icon: Bolt, iconBg: "#ECDDF6", iconColor: "#60387A" },
-    { id: 3, title: "DevOps", color: "#ECF1FF", icon: Server, iconBg: "#E0E7FB", iconColor: "#354571" },
-    { id: 4, title: "Design", color: "#D8F9F3", icon: Diamond, iconBg: "#BBE4DD", iconColor: "#256D5B" },
-    { id: 5, title: "Docs", color: "#FFF3CB", icon: FileText, iconBg: "#F9E4E3", iconColor: "#9F8A47" },
+    { id: CATEGORY_IDS.BLOG_DEV, title: "Dev", color: "#FFEDEC", iconBg: "#F9E4E3", icon: Code, iconColor: "#7D2F2B" },
+    { id: CATEGORY_IDS.BLOG_DIGITAL_SOLUTIONS, title: "Digital Solutions", color: "#F7EBFF", icon: Bolt, iconBg: "#ECDDF6", iconColor: "#60387A" },
+    { id: CATEGORY_IDS.BLOG_DEVOPS, title: "DevOps", color: "#ECF1FF", icon: Server, iconBg: "#E0E7FB", iconColor: "#354571" },
+    { id: CATEGORY_IDS.BLOG_DESIGN, title: "Design", color: "#D8F9F3", icon: Diamond, iconBg: "#BBE4DD", iconColor: "#256D5B" },
+    { id: CATEGORY_IDS.BLOG_DOCS, title: "Docs", color: "#FFF3CB", icon: FileText, iconBg: "#F9E4E3", iconColor: "#9F8A47" },
 ];
 
 async function fetchCategoryRows(slug, page = 1) {
@@ -77,12 +78,12 @@ export default async function CategoryPage(props) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                         {SearchOfCategory.map((category) => {
                             const IconComponent = category.icon;
-                            const slugLink = category.title.toLowerCase().replace(/\s+/g, "-");
-                            const isActive = slug === slugLink;
+                            const categorySlug = BLOG_CATEGORY_SLUG_BY_ID[category.id] ?? String(category.id);
+                            const isActive = String(slug) === String(categorySlug) || String(slug) === String(category.id);
                             return (
                                 <Link
                                     key={category.id}
-                                    href={`/blog/category/${slugLink}`}
+                                    href={`/blog/category/${categorySlug}`}
                                     aria-current={isActive ? "page" : undefined}
                                     className={`flex flex-col items-center p-4 rounded-lg transition ${
                                         isActive

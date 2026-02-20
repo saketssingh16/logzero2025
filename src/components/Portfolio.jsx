@@ -63,11 +63,11 @@ const getCaseStudyCategory = (caseStudy) => {
 };
 
 const getCaseStudyHref = (caseStudy) => {
-  if (!caseStudy) return "/blog/blogDetails";
+  if (!caseStudy) return "/case-studies";
   if (caseStudy.link) return caseStudy.link;
-  const identifier = caseStudy.id ?? caseStudy.slug ?? "";
-  if (!identifier) return "/blog/blogDetails";
-  return `/blog/blogDetails?id=${encodeURIComponent(identifier)}`;
+  const slugOrId = caseStudy.slug ?? caseStudy.id ?? "";
+  if (!slugOrId) return "/case-studies";
+  return `/case-studies/${encodeURIComponent(slugOrId)}`;
 };
 
 export default function Portfolio() {
@@ -186,7 +186,11 @@ export default function Portfolio() {
                   <div className="relative w-full h-44 sm:h-48 md:h-44 lg:h-48">
                     <img
                       src={getCaseStudyImageSrc(post)}
-                      alt={getCaseStudyTitle(post)}
+                      alt={
+                        post?.featuredImageBase64 || post?.featuredImage || post?.imageUrl
+                          ? post?.featuredImageDesc || getCaseStudyTitle(post)
+                          : ""
+                      }
                       className="w-full h-full object-cover object-center"
                       loading={index < 2 ? "eager" : "lazy"}
                     />

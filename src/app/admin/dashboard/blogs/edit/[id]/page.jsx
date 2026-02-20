@@ -53,8 +53,11 @@ export default function EditPostPage() {
   const [submitting, setSubmitting] = useState(false);
   const createdAtInputRef = useRef(null);
 
+  const [deferCaseStudyFields, setDeferCaseStudyFields] = useState(false);
+
   const [form, setForm] = useState({
     metaTitle: "",
+    slug: "",
     metaDescription: "",
     author: "",
     popular: false,
@@ -72,6 +75,7 @@ export default function EditPostPage() {
     editorHtml: "",
     featuredImageFile: null,
     featuredImageBase64: "",
+    featuredImageDesc: "",
   });
 
   // ----------------------------
@@ -197,6 +201,7 @@ export default function EditPostPage() {
         const createdAtRaw = p.created_at ?? p.createdAt ?? "";
         setForm({
           metaTitle: p.metaTitle ?? "",
+          slug: p.slug ?? "",
           metaDescription: p.metaDescription ?? "",
           author: p.author ?? "",
           popular: p.popular ?? false,
@@ -215,6 +220,7 @@ export default function EditPostPage() {
           editorHtml: htmlContent,
           featuredImageFile: null,
           featuredImageBase64: p.featuredImageBase64 || "",
+          featuredImageDesc: p.featuredImageDesc ?? "",
         });
       } catch (error) {
         console.error("Failed to load post data:", error);
@@ -226,6 +232,35 @@ export default function EditPostPage() {
     if (id) loadData();
   }, [id]);
 
+  useEffect(() => {
+    if (loading || form.type !== "case_study") {
+      setDeferCaseStudyFields(false);
+      return;
+    }
+
+    let cancelled = false;
+    const show = () => {
+      if (!cancelled) setDeferCaseStudyFields(true);
+    };
+
+    // Defer expensive blocks until the browser is idle (or next tick)
+    const w = typeof window !== "undefined" ? window : null;
+    let idleId;
+    if (w && typeof w.requestIdleCallback === "function") {
+      idleId = w.requestIdleCallback(show, { timeout: 250 });
+      return () => {
+        cancelled = true;
+        if (typeof w.cancelIdleCallback === "function") w.cancelIdleCallback(idleId);
+      };
+    }
+
+    const timeoutId = setTimeout(show, 0);
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+    };
+  }, [loading, form.type]);
+
   const handleBasicChange = (e) => {
     const { name, value } = e.target;
 
@@ -234,6 +269,7 @@ export default function EditPostPage() {
       setForm((prev) => ({
         ...prev,
         type: nextType,
+        popular: nextType === "case_study" ? false : prev.popular,
         blogCategory: nextType === "blog_post" ? prev.blogCategory : "",
         portfolioCategoryIds: nextType === "case_study" ? prev.portfolioCategoryIds : [],
         technologyIds: nextType === "case_study" ? prev.technologyIds : [],
@@ -305,14 +341,20 @@ export default function EditPostPage() {
       metaTitle: form.metaTitle,
       metaDescription: form.metaDescription,
       author: form.author,
-      popular: form.popular,
+      popular: form.type === "blog_post" ? form.popular : false,
       type: form.type,
       status: form.status,
       content: contentBlocks,
       solutionIds: form.solutionIds,
       indexValue: form.indexValue ?? true,
       featuredImageBase64: form.featuredImageBase64 || null,
+      featuredImageDesc: (form.featuredImageDesc || "").trim(),
     };
+
+    const trimmedSlug = (form.slug || "").trim();
+    if (trimmedSlug) {
+      payload.slug = trimmedSlug;
+    }
 
     const formattedCreatedAt = formatCreatedAtValue(form.created_at);
     if (formattedCreatedAt) {
@@ -352,7 +394,27 @@ export default function EditPostPage() {
     }
   };
 
-  if (loading || !filters || !initialPost) return <div className="p-8 text-white">Loading...</div>;
+  if (loading || !filters || !initialPost) {
+    return (
+      <div className="min-h-screen bg-black text-gray-100 flex justify-center">
+        <div className="w-full max-w-5xl px-6 py-10 space-y-6">
+          <h1 className="text-2xl font-semibold !text-white">Edit content</h1>
+          <div
+            className="p-5 bg-zinc-900/50 rounded-lg border border-zinc-800"
+            role="status"
+            aria-busy="true"
+          >
+            <p className="text-sm text-gray-400">Loading post…</p>
+            <div className="mt-4 space-y-3">
+              <div className="h-9 rounded bg-zinc-800/60 animate-pulse" />
+              <div className="h-9 rounded bg-zinc-800/40 animate-pulse" />
+              <div className="h-9 rounded bg-zinc-800/30 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const indexValueOn = form.indexValue !== false;
 
@@ -371,6 +433,20 @@ export default function EditPostPage() {
                 onChange={handleBasicChange}
                 className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1">Slug (optional)</label>
+              <input
+                name="slug"
+                value={form.slug}
+                onChange={handleBasicChange}
+                className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
+                placeholder="Leave blank to keep existing slug"
+              />
+              <p className="mt-1 text-xs text-gray-400">
+                Changing the slug won’t change the meta title.
+              </p>
             </div>
 
             <div>
@@ -397,21 +473,23 @@ export default function EditPostPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm mb-1r">Popular</label>
-                  <button
-                    type="button"
-                    onClick={handleTogglePopular}
-                    aria-pressed={form.popular}
-                    className={`px-4 py-2 text-sm cursor-pointer font-semibold rounded-full transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                      form.popular
-                        ? "bg-emerald-500 text-black"
-                        : "bg-zinc-800 text-gray-200"
-                    }`}
-                  >
-                    {form.popular ? "Popular" : "Mark popular"}
-                  </button>
-                </div>
+                {form.type === "blog_post" && (
+                  <div>
+                    <label className="block text-sm mb-1">Popular</label>
+                    <button
+                      type="button"
+                      onClick={handleTogglePopular}
+                      aria-pressed={form.popular}
+                      className={`px-4 py-2 text-sm cursor-pointer font-semibold rounded-full transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                        form.popular
+                          ? "bg-emerald-500 text-black"
+                          : "bg-zinc-800 text-gray-200"
+                      }`}
+                    >
+                      {form.popular ? "Popular" : "Mark popular"}
+                    </button>
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm mb-1">Allow indexing</label>
@@ -518,32 +596,38 @@ export default function EditPostPage() {
 
             {form.type === "case_study" && (
               <>
-                <div>
-                  <MultiSelect
-                    label="Portfolio categories"
-                    options={filters.portfolioCategories}
-                    selectedIds={form.portfolioCategoryIds}
-                    onChange={(catId) => toggleIdInArray("portfolioCategoryIds", catId)}
-                  />
-                </div>
+                {!deferCaseStudyFields ? (
+                  <div className="text-xs text-gray-500">Loading case study fields…</div>
+                ) : (
+                  <>
+                    <div>
+                      <MultiSelect
+                        label="Portfolio categories"
+                        options={filters.portfolioCategories}
+                        selectedIds={form.portfolioCategoryIds}
+                        onChange={(catId) => toggleIdInArray("portfolioCategoryIds", catId)}
+                      />
+                    </div>
 
-                <div>
-                  <MultiSelect
-                    label="Technologies"
-                    options={filters.technologies}
-                    selectedIds={form.technologyIds}
-                    onChange={(techId) => toggleIdInArray("technologyIds", techId)}
-                  />
-                </div>
+                    <div>
+                      <MultiSelect
+                        label="Technologies"
+                        options={filters.technologies}
+                        selectedIds={form.technologyIds}
+                        onChange={(techId) => toggleIdInArray("technologyIds", techId)}
+                      />
+                    </div>
 
-                <div>
-                  <MultiSelect
-                    label="Industries"
-                    options={filters.industries}
-                    selectedIds={form.industryIds}
-                    onChange={(industryId) => toggleIdInArray("industryIds", industryId)}
-                  />
-                </div>
+                    <div>
+                      <MultiSelect
+                        label="Industries"
+                        options={filters.industries}
+                        selectedIds={form.industryIds}
+                        onChange={(industryId) => toggleIdInArray("industryIds", industryId)}
+                      />
+                    </div>
+                  </>
+                )}
               </>
             )}
 
@@ -561,7 +645,13 @@ export default function EditPostPage() {
               {(form.featuredImageBase64 || initialPost.featuredImage) ? (
                 <img
                   src={form.featuredImageBase64 || initialPost.featuredImage}
-                  alt="Featured"
+                  alt={
+                    form?.featuredImageDesc ||
+                    initialPost?.featuredImageDesc ||
+                    form?.metaTitle ||
+                    initialPost?.metaTitle ||
+                    "Featured image"
+                  }
                   className="mt-2 max-h-48 rounded border border-zinc-800 object-cover"
                 />
               ) : (
@@ -570,13 +660,30 @@ export default function EditPostPage() {
             </div>
 
             <div>
-              <label className="block text-sm mb-1">New featured image</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFeaturedImageChange}
-                className="text-sm"
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                <div>
+                  <label className="block text-sm mb-1">New featured image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFeaturedImageChange}
+                    className="w-full text-sm text-gray-400 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-1">
+                    Featured image alt text (optional)
+                  </label>
+                  <input
+                    name="featuredImageDesc"
+                    value={form.featuredImageDesc}
+                    onChange={handleBasicChange}
+                    className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
+                    placeholder="Describe the featured image for accessibility and SEO"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -591,38 +698,44 @@ export default function EditPostPage() {
                 Case Study Specifics
               </h2>
 
-              <div>
-                <label className="block text-sm mb-1">Challenges</label>
-                <textarea
-                  name="challenges"
-                  value={form.challenges}
-                  onChange={handleBasicChange}
-                  rows={4}
-                  className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
-                />
-              </div>
+              {!deferCaseStudyFields ? (
+                <div className="text-xs text-gray-500">Loading case study fields…</div>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm mb-1">Challenges</label>
+                    <textarea
+                      name="challenges"
+                      value={form.challenges}
+                      onChange={handleBasicChange}
+                      rows={4}
+                      className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm mb-1">Solution</label>
-                <textarea
-                  name="solution"
-                  value={form.solution}
-                  onChange={handleBasicChange}
-                  rows={4}
-                  className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm mb-1">Solution</label>
+                    <textarea
+                      name="solution"
+                      value={form.solution}
+                      onChange={handleBasicChange}
+                      rows={4}
+                      className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm mb-1">Result</label>
-                <textarea
-                  name="result"
-                  value={form.result}
-                  onChange={handleBasicChange}
-                  rows={4}
-                  className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm mb-1">Result</label>
+                    <textarea
+                      name="result"
+                      value={form.result}
+                      onChange={handleBasicChange}
+                      rows={4}
+                      className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
+                    />
+                  </div>
+                </>
+              )}
             </div>
           )}
 
