@@ -26,6 +26,9 @@ const getYouMayLikeImageSrc = (post) => {
 
 const getYouMayLikeTitle = (post) => post?.metaTitle || post?.title || "";
 
+const hasPostImage = (post) =>
+  Boolean(post?.featuredImageBase64 || post?.featuredImage || post?.imageUrl);
+
 const formatDate = (iso) => {
   if (!iso) return "";
   try {
@@ -146,7 +149,11 @@ const SearchResultClient = () => {
       <div className="relative">
         <img
           src={getSearchResultImageSrc(post)}
-          alt={post.metaTitle}
+          alt={
+            hasPostImage(post)
+              ? post?.featuredImageDesc || post?.metaTitle || post?.title || "Blog post image"
+              : ""
+          }
           className="w-full md:w-64 h-48 object-cover"
         />
         <span className="absolute bottom-4 right-4 px-3 py-2 bg-[#1E8767] text-white text-sm font-medium rounded-lg shadow-md">
@@ -295,7 +302,11 @@ const SearchResultClient = () => {
                       >
                         <img
                           src={getYouMayLikeImageSrc(post)}
-                          alt={getYouMayLikeTitle(post)}
+                          alt={
+                            hasPostImage(post)
+                              ? post?.featuredImageDesc || getYouMayLikeTitle(post)
+                              : ""
+                          }
                           className="w-20 h-20 object-cover rounded"
                         />
                         <div>

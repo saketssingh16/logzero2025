@@ -108,54 +108,62 @@ export default function BlogDashboard() {
   const fetchPosts = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
+      const params = {
+        page,
+        limit,
+      };
 
-      params.append("page", String(page));
-      params.append("limit", String(limit));
-      params.append("sortBy", "createdAt");
-      params.append("sortOrder", "DESC");
-
-      if (filters.status) params.append("status", filters.status);
-      if (filters.type) params.append("type", filters.type);
+      if (filters.status) params.status = filters.status;
+      if (filters.type) params.type = filters.type;
 
       if (isBlogPostType && filters.blogCategory) {
-        params.append("blogCategory", filters.blogCategory);
+        params.blogCategory = filters.blogCategory;
       }
 
-      if (isCaseStudyType) {
-        if (filters.portfolioCategoryIds.length) {
-          params.append(
-            "portfolioCategoryIds",
-            filters.portfolioCategoryIds.join(",")
-          );
-        }
-        if (filters.solutionIds.length) {
-          params.append("solutionIds", filters.solutionIds.join(","));
-        }
-        if (filters.technologyIds.length) {
-          params.append("technologyIds", filters.technologyIds.join(","));
-        }
-        if (filters.industryIds.length) {
-          params.append("industryIds", filters.industryIds.join(","));
-        }
-      }
+      // if (isCaseStudyType) {
+      //   if (filters.portfolioCategoryIds.length) {
+      //     params.portfolioCategoryIds = filters.portfolioCategoryIds.join(",");
+      //   }
+      //   if (filters.solutionIds.length) {
+      //     params.solutionIds = filters.solutionIds.join(",");
+      //   }
+      //   if (filters.technologyIds.length) {
+      //     params.technologyIds = filters.technologyIds.join(",");
+      //   }
+      //   if (filters.industryIds.length) {
+      //     params.industryIds = filters.industryIds.join(",");
+      //   }
+      // }
 
-      const res = await api.get(`/posts?${params.toString()}`);
-      const data = res.data;
-      
-      if (data?.success && Array.isArray(data?.data?.rows)) {
-        setPosts(data.data.rows);
+      const normalizePostsResponse = (payload) => {
+        // New API: { success, totalPages, currentPage, totalRecords, data: [...] }
+        if (payload?.success && Array.isArray(payload?.data)) {
+          return {
+            rows: payload.data,
+            totalPages:
+              typeof payload.totalPages === "number" && payload.totalPages > 0
+                ? payload.totalPages
+                : 1,
+          };
+        }
 
-        const tp =
-          typeof data.pagination?.totalPages === "number"
-            ? data.pagination.totalPages
-            : Math.max(1, Math.ceil((data.data.count || 0) / limit));
+        // Old API fallback: { success, data: { count, rows: [...] }, pagination }
+        if (payload?.success && Array.isArray(payload?.data?.rows)) {
+          const tp =
+            typeof payload.pagination?.totalPages === "number"
+              ? payload.pagination.totalPages
+              : Math.max(1, Math.ceil((payload.data.count || 0) / limit));
+          return { rows: payload.data.rows, totalPages: tp };
+        }
 
-        setTotalPages(tp);
-      } else {
-        setPosts([]);
-        setTotalPages(1);
-      }
+        return { rows: [], totalPages: 1 };
+      };
+
+      const res = await api.get("/posts/all", { params });
+      const normalized = normalizePostsResponse(res.data);
+
+      setPosts(normalized.rows);
+      setTotalPages(normalized.totalPages);
     } catch (err) {
       console.error("Error fetching posts:", err);
       setPosts([]);
@@ -536,7 +544,7 @@ export default function BlogDashboard() {
                 <button
                   type="button"
                   onClick={handleSearchReset}
-                  className="shrink-0 inline-flex items-center justify-center h-10 px-3 rounded-md border border-zinc-800 bg-zinc-950 hover:bg-zinc-800 transition-colors text-sm"
+                  className="shrink-0 inline-flex items-center justify-center h-10 px-3 rounded-md border border-zinc-800 bg-zinc-950 hover:bg-zinc-800 transition-colors text-sm cursor-pointer"
                 >
                   Reset
                 </button>
@@ -637,7 +645,7 @@ export default function BlogDashboard() {
                             {(post.featuredImageBase64 || post.featuredImage) ? (
                               <img
                                 src={post.featuredImageBase64 || post.featuredImage}
-                                alt={post.metaTitle}
+                                alt={post?.featuredImageDesc || post?.metaTitle || post?.title || "Post featured image"}
                                 className="h-full w-full object-cover"
                               />
                             ) : (
@@ -699,7 +707,7 @@ export default function BlogDashboard() {
                       </td>
 
                       <td className="px-2 md:px-4 py-2 md:py-3 text-zinc-400 hidden md:table-cell text-xs md:text-sm">
-                        {formatDate(post.createdAt)}
+                        {formatDate(post.created_at || post.createdAt)}
                       </td>
 
                       <td className="px-2 md:px-4 py-2 md:py-3">
@@ -744,7 +752,7 @@ export default function BlogDashboard() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="flex items-center gap-1 px-2 md:px-4 py-2 text-xs md:text-sm bg-zinc-900 border border-zinc-800 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-800 whitespace-nowrap"
+                  className="flex items-center gap-1 px-2 md:px-4 py-2 text-xs md:text-sm bg-zinc-900 border border-zinc-800 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-800 whitespace-nowrap cursor-pointer"
                 >
                   <ChevronLeft size={14} className="md:w-4 md:h-4" /> Prev
                 </button>
@@ -757,7 +765,7 @@ export default function BlogDashboard() {
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="flex items-center gap-1 px-2 md:px-4 py-2 text-xs md:text-sm bg-zinc-900 border border-zinc-800 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-800 whitespace-nowrap"
+                  className="flex items-center gap-1 cursor-pointer px-2 md:px-4 py-2 text-xs md:text-sm bg-zinc-900 border border-zinc-800 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-800 whitespace-nowrap"
                 >
                   Next <ChevronRight size={14} className="md:w-4 md:h-4" />
                 </button>

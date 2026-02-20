@@ -1,37 +1,14 @@
 import PrivacyPolicySection from "@/components/PrivacyPolicySection";
-import api from "@/lib/api";
+import { generateMetadataFromCategoryId } from "@/lib/categoryMetadata";
+import { CATEGORY_IDS } from "@/lib/categoryIds";
 export const revalidate = 0;
 
 export async function generateMetadata() {
-
-  const apiUrl = `${
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    "https://webapi.logzerotechnologies.com/api"
-  }/categories/categoriesDetail`;
-
-   try {
-    const res = await api.get(apiUrl);
-    const aboutMeta = 
-    res?.data?.data?.find((item) => item?.customSlug === "privacy-policy") ?? {};
-    
-    const title =
-      aboutMeta.metaTitle || "Privacy Policy";
-    const description =
-      aboutMeta.metaDescription ||
-      "This is our \"Privacy Policy\" description here.";
-
-    const indexValue = aboutMeta.indexValue ?? true;
-    const robots = indexValue ? undefined : { index: false, follow: false };
-
-    return robots ? { title, description, robots } : { title, description };
-
-   } catch (error) {
-         const title = "Privacy Policy";
-    const description =
-      "This is our \"Privacy Policy\" description here..";
-    return { title, description };
-  }
-   }
+  return generateMetadataFromCategoryId(CATEGORY_IDS.PRIVACY_POLICY, {
+    title: "Privacy Policy",
+    description: "This is our \"Privacy Policy\" description here.",
+  });
+}
 
 
 

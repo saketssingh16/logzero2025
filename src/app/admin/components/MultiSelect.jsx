@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { X, ChevronDown } from "lucide-react";
 
 export default function MultiSelect({
@@ -11,6 +11,24 @@ export default function MultiSelect({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
+
+  const safeOptions = Array.isArray(options) ? options : [];
+  const safeSelectedIds = Array.isArray(selectedIds) ? selectedIds : [];
+
+  const optionsById = useMemo(() => {
+    const map = new Map();
+    for (const opt of safeOptions) {
+      map.set(opt.id, opt);
+    }
+    return map;
+  }, [safeOptions]);
+
+  const selectedIdSet = useMemo(() => new Set(safeSelectedIds), [safeSelectedIds]);
+
+  const selectedOptions = useMemo(
+    () => safeSelectedIds.map((id) => optionsById.get(id)).filter(Boolean),
+    [safeSelectedIds, optionsById]
+  );
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -25,8 +43,6 @@ export default function MultiSelect({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const selectedOptions = options.filter((opt) => selectedIds.includes(opt.id));
 
   return (
     <div className="relative" ref={containerRef}>
@@ -64,9 +80,9 @@ export default function MultiSelect({
       {/* Dropdown Menu */}
       {isOpen && (
         <div className="absolute z-20 w-full mt-1 bg-zinc-900 border border-zinc-800 rounded-md shadow-xl max-h-60 overflow-auto">
-          {options.length > 0 ? (
-            options.map((opt) => {
-              const isSelected = selectedIds.includes(opt.id);
+          {safeOptions.length > 0 ? (
+            safeOptions.map((opt) => {
+              const isSelected = selectedIdSet.has(opt.id);
               return (
                 <div
                   key={opt.id}

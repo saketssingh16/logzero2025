@@ -99,7 +99,7 @@ export default async function BlogByIdPage({ params }) {
         {(post.featuredImageBase64 || post.featuredImage) ? (
           <img
             src={post.featuredImageBase64 || post.featuredImage}
-            alt={post.metaTitle}
+            alt={post?.featuredImageDesc || post?.metaTitle || post?.title || "Post featured image"}
             className="w-full rounded-lg border border-zinc-800"
           />
         ) : null}
