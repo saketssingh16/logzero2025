@@ -4,6 +4,7 @@ import Testimonials from "@/components/Testimonials";
 import { Lztallcontext } from "@/context/Lztcontext";
 import FAQSection from "@/components/FAQSection";
 import HeroSection from "@/components/HeroSection";
+import SuccessStory from "@/components/SucessStory";
 
 export default function Clients() {
   useEffect(() => {
@@ -71,6 +72,40 @@ export default function Clients() {
     { src: "/assets/img/LIP.png", alt: "Lighthouse Logo" },
     { src: "/assets/img/vapes.png", alt: "WKMT Logo" },
   ];
+  const MobileappSucessStoryData = [
+  {
+    title: "ADPKD Urination-Tracking App for Tolvaptan Patients",
+    subtitle: "Healthcare, Pharmaceuticals",
+    challenge:
+      "The challenge was to create a solution that enables patients to easily and consistently track their urination patterns.",
+    solution:
+      "A Flutter app was developed for real-time urination tracking with set reporting times, followed by user feedback to refine the app for future trials.",
+    Resultstext:
+      "Higher data completeness and accuracy than self-reports, strong usability feedback, and clearer side-effect patterns to guide care.",
+    technologies: ["Flutter", "PHP (Laravel)", "React.js", "MySQL"],
+    image:
+      "/assets/img/ADPKD Urination-Tracking App for Tolvaptan Patients- Case Study.webp",
+    width: 564,
+    height: 383,
+    link: "https://www.logzerotechnologies.com/case-studies/improving-patient-experience-adpkd-treatment-urination-tracking-app/",
+  },
+  {
+    title:
+      "Enhancing Home Interior Projects with InteriorChowk’s Comprehensive Marketplace",
+    subtitle: "Home Interior Solutions & Services Marketplace",
+    challenge:
+      "Homeowners struggled with fragmented service providers, lack of trust, limited access to quality materials, and complex coordination during home interior projects.",
+    solution:
+      "InteriorChowk developed a single mobile app connecting homeowners with verified designers, skilled workers, and premium suppliers—offering a seamless platform for design, sourcing, and project management.",
+    Resultstext:
+      "Streamlined project workflows, improved customer satisfaction, higher trust through verified professionals, faster execution, and easy access to top-quality materials.",
+    technologies: ["PHP", "Laravel", "Flutter"],
+    image: "/assets/img/health-tracker.png",
+    width: 564,
+    height: 323,
+    link: "https://www.logzerotechnologies.com/case-studies/enhancing-home-interior-projects-with-interiorchowks-comprehensive-marketplace/",
+  },
+];
 
   return (
     <>
@@ -158,6 +193,17 @@ export default function Clients() {
           }
         `}</style>
       </section>
+
+      <section className="px-6 bgblue1 py-16">
+              <div className="container mx-auto">
+                <SuccessStory
+                  title="Our Success Story"
+                  subtitle="Real projects, real results. See how we’ve helped businesses transform their ideas into successful mobile applications that drive growth and user engagement."
+                  caseStudies={MobileappSucessStoryData}
+                  portfolioCategorySlug="mobile-development"
+                />
+              </div>
+            </section>
 
       {/* TESTIMONIAL */}
       <section className="py-16 px-6 bg-[#F1F6FB]">

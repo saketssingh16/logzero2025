@@ -7,6 +7,7 @@ import Link from "next/link";
 import { MdOutlineArrowRight } from "react-icons/md";
 import api from "@/lib/api";
 import { BLOG_CATEGORY_SLUG_BY_ID, CATEGORY_IDS } from "@/lib/categoryIds";
+import { useBreadcrumbs } from "@/context/BreadcrumbsContext";
 
 const featuredImage = "/assets/img/featuredImage.webp";
 const popularPostImage = "/assets/img/popularPostImg.webp";
@@ -155,6 +156,7 @@ export default function App() {
   const [youMayLikePosts, setYouMayLikePosts] = useState([]);
   const [loadingYouMayLike, setLoadingYouMayLike] = useState(false);
   const [canLoadMoreYouMayLike, setCanLoadMoreYouMayLike] = useState(true);
+  const { setBreadcrumb } = useBreadcrumbs();
 
   const handleSearch = (e) => {
     if (e.key === "Enter" && searchTerm.trim()) {
@@ -163,6 +165,8 @@ export default function App() {
   };
 
   useEffect(() => {
+    setBreadcrumb({ label: "Blog" });
+
     const fetchInitialPosts = async () => {
       setLoadingMain(true);
       try {

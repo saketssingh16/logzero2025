@@ -812,7 +812,7 @@ export default function AddPostPage() {
 
           {form.type === "case_study" && (
             <div className="space-y-5 p-5 bg-zinc-900/50 rounded-lg border border-zinc-800">
-              <h2 className="text-lg font-medium text-gray-300 border-b border-zinc-800 pb-2">
+              <h2 className="text-lg font-medium !text-white border-b border-zinc-800 pb-2">
                 Case Study Specifics
               </h2>
               <div>

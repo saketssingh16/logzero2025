@@ -5,9 +5,13 @@ import Link from "next/link";
 import { CalendarDays } from "lucide-react";
 
 const getDevPostHref = (post) => {
-  const identifier = post?.id ?? post?.slug ?? "";
-  if (!identifier) return "/blog/blogDetails";
-  return `/blog/blogDetails?id=${encodeURIComponent(identifier)}`;
+  const slug = post?.slug;
+  if (slug) return `/blog/${encodeURIComponent(slug)}`;
+
+  const id = post?.id;
+  if (id) return `/blog/blogDetails?id=${encodeURIComponent(id)}`;
+
+  return "/blog";
 };
 
 export default function CategoryPostsClient({ initialPosts = [], morePosts = [] }) {

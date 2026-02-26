@@ -7,6 +7,7 @@ import CategoryPostsClient from "@/components/CategoryPostsClient";
 import api from "@/lib/api";
 import { BLOG_CATEGORY_ID_BY_SLUG, BLOG_CATEGORY_SLUG_BY_ID, CATEGORY_IDS } from "@/lib/categoryIds";
 import { getCategoryMetaById } from "@/lib/categoryMetadata";
+import CategoryBreadcrumbClient from "@/components/CategoryBreadcrumbClient";
 
 export const revalidate = 0;
 
@@ -139,13 +140,14 @@ export default async function CategoryPage(props) {
 
 	return (
 		<div className="bg-white font-sans">
+			<CategoryBreadcrumbClient label={displaySlug} />
 			<section className="mt-16 ">
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 					<div className="gap-6 pt-[30px] pb-[30px] pl-6 xl:pl-[80px] lg:pl-[50px] md:pl-8 pr-6 lg:pr-[30px] md:pr-[0px]">
 						<h2 className=" lg:!text-[48px] md:!leading-[2rem] lg:!leading-[3rem] font-semibold text-[#1F1F1F]">
 							{rawParam ? `${displaySlug} Insights & Best Practices` : "Category"}
 						</h2>
-						<p className="lg:text-xl text-[#111827] mt-2">{`Latest posts for ${displaySlug || "this category"}.`}</p>
+						<p className="lg:text-xl text-[#111827] my-2">{`Latest posts for ${displaySlug || "this category"}.`}</p>
 						<div className="inline-block">
 							<InlineGreenButton text="Schedule Consultation" linkurl="/contact-us" linktarget="_self" MoveRighticon services={[]} />
 						</div>
