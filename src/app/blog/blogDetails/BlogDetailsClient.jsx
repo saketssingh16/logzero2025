@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CalendarDays } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/api";
+import { useBreadcrumbs } from "@/context/BreadcrumbsContext";
 
 const DEFAULT_DETAILS_IMAGE = "/assets/img/devImage.webp";
 
@@ -25,6 +26,7 @@ const formatIsoDate = (isoValue) => {
 export default function BlogDetailsClient({ identifier }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { setBreadcrumb } = useBreadcrumbs();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -63,6 +65,13 @@ export default function BlogDetailsClient({ identifier }) {
           return;
         }
         setPost(data);
+        const label =
+          data.metaTitle ||
+          data.title ||
+          data.name ||
+          data.slug ||
+          "Details";
+        setBreadcrumb({ label });
       } catch (err) {
         if (isCancelError(err)) {
           canceled = true;

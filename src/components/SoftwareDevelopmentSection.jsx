@@ -3,6 +3,7 @@ import { useContext, React, useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import HeroSection from "@/components/HeroSection";
+import { useBreadcrumbs } from "@/context/BreadcrumbsContext";
 import { Lztallcontext } from "@/context/Lztcontext";
 import CardContainer from "@/components/CardContainer";
 import GreenButton from "@/components/GreenButton";
@@ -276,9 +277,14 @@ export default function Mission() {
     "Software Maintenance & Support",
   ];
 
+  const { setBreadcrumb } = useBreadcrumbs();
+
+  useEffect(() => {
+    setBreadcrumb({ label: "Custom Software Development" });
+  }, [setBreadcrumb]);
+
   return (
     <>
-     
       <HeroSection
         title="Custom Software Development Services"
         titlecolor={false}

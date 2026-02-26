@@ -31,7 +31,7 @@ export default function HeroSection({
 }) {
   return (
     <section className="bggray2">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 ">
         {/* LEFT CONTENT */}
         <div className="gap-6 pt-[30px] pb-[30px] pl-6 xl:pl-[80px] lg:pl-[50px] md:pl-8 pr-6 lg:pr-[30px] md:pr-[0px]">
           {/* Heading */}
