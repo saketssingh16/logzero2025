@@ -1,5 +1,6 @@
 "use client";
-
+import { countries } from "country-data";
+import Select from "react-select";
 import { useEffect, useMemo, useState, useRef } from "react";
 import {
   X,
@@ -21,11 +22,35 @@ import logger from "@/lib/logger";
 import api from "@/lib/api";
 
 const CONTACT_INQUIRY_ENDPOINT = `${(process.env.NEXT_PUBLIC_API_BASE_URL || "https://webapi.logzerotechnologies.com/api").replace(/\/$/, "")}/v1/consultation/create`;
+const COUNTRY_CODE_REGEX = /^\+\d{1,4}$/;
+const PHONE_NUMBER_REGEX = /^\d{6,15}$/;
+
+const COUNTRY_DIAL_CODES = countries.all
+  .filter((c) => c.countryCallingCodes && c.countryCallingCodes.length > 0)
+  .map((c) => ({
+    country: c.name,
+    iso: c.alpha2,
+    code: c.countryCallingCodes[0].replace(/\s/g, ""),
+  }))
+  .sort((a, b) => a.country.localeCompare(b.country));
+
+const DIAL_CODE_BY_ISO = COUNTRY_DIAL_CODES.reduce((acc, item) => {
+  acc[item.iso] = item.code;
+  return acc;
+}, {});
+
+const buildFormLogMeta = (data = {}) => ({
+  name: data.name?.trim() || undefined,
+  email: data.email ? maskEmail(data.email) : undefined,
+  hasPhone: Boolean(data.phone),
+  phoneEnding: data.phone ? data.phone.slice(-2) : undefined,
+  detailLength: data.detail?.length || 0,
+});
 
 export default function LeadFormModal() {
   const { open, payload, closeModal } = useModal();
   const servicesFromPayload = payload?.servicesOptions || null;
- const [recaptchaToken, setRecaptchaToken] = useState(null);  
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
   const dateInputRef = useRef(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,7 +69,7 @@ export default function LeadFormModal() {
       "Digital Marketing",
       "Other (please specify)",
     ],
-    []
+    [],
   );
 
   const services =
@@ -55,6 +80,7 @@ export default function LeadFormModal() {
   const [formData, setFormData] = useState({
     fullName: "",
     Email: "",
+    phoneCountryCode: "+91",
     phoneNumber: "",
     industry: "",
     website: "",
@@ -70,6 +96,7 @@ export default function LeadFormModal() {
       setFormData({
         fullName: "",
         Email: "",
+        phoneCountryCode: "+91",
         phoneNumber: "",
         industry: "",
         website: "",
@@ -81,6 +108,39 @@ export default function LeadFormModal() {
       });
     }
   }, [open]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const detectCountryCode = async () => {
+      try {
+        const response = await fetch("https://ipapi.co/json/");
+        if (!response.ok) return;
+
+        const data = await response.json();
+        const iso = data?.country_code;
+
+        if (!iso) return;
+
+        const detected = COUNTRY_DIAL_CODES.find((c) => c.iso === iso);
+
+        if (isMounted && detected) {
+          setFormData((prev) => ({
+            ...prev,
+            phoneCountryCode: detected.code,
+          }));
+        }
+      } catch (err) {
+        console.log("Geo detection failed");
+      }
+    };
+
+    detectCountryCode();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const minDateTime = useMemo(() => {
     const dt = new Date();
@@ -103,6 +163,12 @@ export default function LeadFormModal() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "phoneNumber") {
+      const digitsOnly = value.replace(/\D/g, "").slice(0, 15);
+      setFormData((s) => ({ ...s, phoneNumber: digitsOnly }));
+      return;
+    }
 
     if (name === "consultationDateTime") {
       if (!value) {
@@ -134,7 +200,7 @@ export default function LeadFormModal() {
   const formatDateToInputValue = (date) => {
     const pad = (num) => String(num).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-      date.getDate()
+      date.getDate(),
     )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
@@ -182,19 +248,23 @@ export default function LeadFormModal() {
     const submissionMeta = buildFormLogMeta(formData);
     logger.debug({ submissionMeta }, "Submitting lead form");
 
-   // 1. Find the reCAPTCHA response token
+    // 1. Find the reCAPTCHA response token
     // The reCAPTCHA widget inserts a hidden input field named 'g-recaptcha-response'
-    const recaptchaTokenField = document.querySelector('[name="g-recaptcha-response"]');
-    const recaptchaToken = recaptchaTokenField ? recaptchaTokenField.value : null;
+    const recaptchaTokenField = document.querySelector(
+      '[name="g-recaptcha-response"]',
+    );
+    const recaptchaToken = recaptchaTokenField
+      ? recaptchaTokenField.value
+      : null;
 
     if (!recaptchaToken) {
       logger.error(
-        {submissionMeta},
-        "Lead form blocked because reCAPTCHA is missing"
-      )
-        alert("Please complete the reCAPTCHA verification.");
-        // Optional: If you are using explicit rendering, you might need to reset/re-render the widget here.
-        return; 
+        { submissionMeta },
+        "Lead form blocked because reCAPTCHA is missing",
+      );
+      alert("Please complete the reCAPTCHA verification.");
+      // Optional: If you are using explicit rendering, you might need to reset/re-render the widget here.
+      return;
     }
     if (
       !formData.fullName ||
@@ -208,12 +278,25 @@ export default function LeadFormModal() {
       return;
     }
 
+    if (!COUNTRY_CODE_REGEX.test(formData.phoneCountryCode)) {
+      alert("Please select a valid country code.");
+      return;
+    }
+
+    if (!PHONE_NUMBER_REGEX.test(formData.phoneNumber)) {
+      alert("Please enter a valid phone number (6 to 15 digits only).");
+      return;
+    }
+
     const API_URL = CONTACT_INQUIRY_ENDPOINT;
+
+    const normalizedPhone =
+      `${formData.phoneCountryCode} ${formData.phoneNumber}`.trim();
 
     const dataToSend = {
       email: formData.Email,
       full_name: formData.fullName,
-      phone_number: formData.phoneNumber,
+      phone_number: normalizedPhone,
       industry: formData.industry,
       website: formData.website,
       service: formData.service,
@@ -221,39 +304,45 @@ export default function LeadFormModal() {
       pref_time: formData.consultationDateTime,
       project_desc: formData.projectDescription,
       origin: formData.hearAboutUs,
-      'g-recaptcha-response': recaptchaToken,
+      "g-recaptcha-response": recaptchaToken,
     };
-     const controller = new AbortController();
+    const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 seconds timeout
 
     try {
-
-       logger.info({
-        submissionMeta,
-        enpoint: CONTACT_INQUIRY_ENDPOINT,
-       },
-        "Sending lead form data to API"
-      )    
-      const { data: responseData, status } = await api.post(API_URL, dataToSend, {
-        signal: controller.signal,
-      });
+      logger.info(
+        {
+          submissionMeta,
+          enpoint: CONTACT_INQUIRY_ENDPOINT,
+        },
+        "Sending lead form data to API",
+      );
+      const { data: responseData, status } = await api.post(
+        API_URL,
+        dataToSend,
+        {
+          signal: controller.signal,
+        },
+      );
 
       // console.log(response, responseData);
       if (status >= 200 && status < 300) {
-        logger.info({
-          submissionMeta,
-          endpoint: CONTACT_INQUIRY_ENDPOINT,
-          status,
-          responseMessage: responseData.message,
-        },
-        "Lead form submitted successfully"
-        )
+        logger.info(
+          {
+            submissionMeta,
+            endpoint: CONTACT_INQUIRY_ENDPOINT,
+            status,
+            responseMessage: responseData.message,
+          },
+          "Lead form submitted successfully",
+        );
         setSubmissionStatus("success");
         // console.log("Lead form submitted successfully!");
         closeModal();
         setFormData({
           fullName: "",
           Email: "",
+          phoneCountryCode: "+91",
           phoneNumber: "",
           industry: "",
           website: "",
@@ -263,61 +352,62 @@ export default function LeadFormModal() {
           consultationDateTime: "",
           hearAboutUs: "",
         });
-        
+
         alert("Your form has been submitted successfully.");
-         // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
+        // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
         if (window.grecaptcha) {
           window.grecaptcha.reset();
         }
       } else {
-         logger.error({
-          submissionMeta,
-          endpoint: CONTACT_INQUIRY_ENDPOINT,
-          status,
-          responseMessage: responseData.message,
-         },
-        "Lead form submission failed"
-      );
+        logger.error(
+          {
+            submissionMeta,
+            endpoint: CONTACT_INQUIRY_ENDPOINT,
+            status,
+            responseMessage: responseData.message,
+          },
+          "Lead form submission failed",
+        );
         setSubmissionStatus("error");
         const serverError =
           responseData.message || responseData.error || "Unknown server error.";
         setErrorMessage(`Submission failed: ${serverError}`);
         console.error("API submission failed:", response.status, serverError);
         // alert(`Form submission failed: ${response.message}`);
-         // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
+        // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
         if (window.grecaptcha) {
           window.grecaptcha.reset();
         }
       }
     } catch (err) {
-      if(err.name === 'AbortError' || err.code === 'ERR_CANCELED'){
-               logger.error({
-                submissionMeta,
-                endpoint: CONTACT_INQUIRY_ENDPOINT,
-                error: 'Request timed out',
-               })
-            } else{
-              logger.error(
-                {
-                  submissionMeta,
-                  endpoint: CONTACT_INQUIRY_ENDPOINT,
-                  error: err.message,
-                },
-                "Network error during contact form submission"
-              )
-            } 
+      if (err.name === "AbortError" || err.code === "ERR_CANCELED") {
+        logger.error({
+          submissionMeta,
+          endpoint: CONTACT_INQUIRY_ENDPOINT,
+          error: "Request timed out",
+        });
+      } else {
+        logger.error(
+          {
+            submissionMeta,
+            endpoint: CONTACT_INQUIRY_ENDPOINT,
+            error: err.message,
+          },
+          "Network error during contact form submission",
+        );
+      }
       setSubmissionStatus("error");
       setErrorMessage(
-        "A network error occurred. Please check your connection."
+        "A network error occurred. Please check your connection.",
       );
-       // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
-        if (window.grecaptcha) {
-          window.grecaptcha.reset();
-        }
+      // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
+      if (window.grecaptcha) {
+        window.grecaptcha.reset();
+      }
       console.error("Network or fetch error:", err);
     } finally {
       setIsSubmitting(false);
-     clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
     }
   };
 
@@ -406,15 +496,72 @@ export default function LeadFormModal() {
                   </span>
                   Phone Number <span className="text-red-500 ml-1">*</span>
                 </label>
-                <input
-                  type="tel"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="+91 98765 43210"
-                  className="w-full mt-2 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5BC2A7] outline-none transition-all"
-                />
+                <div className="mt-2 flex gap-2">
+                  <div className="w-[150px] shrink-0">
+                    <Select
+                      options={COUNTRY_DIAL_CODES.map((item) => ({
+                        value: item.code,
+                        label: `${item.iso} ${item.code}`,
+                      }))}
+                      value={{
+                        value: formData.phoneCountryCode,
+                        label:
+                          COUNTRY_DIAL_CODES.find(
+                            (c) => c.code === formData.phoneCountryCode,
+                          )?.iso + ` ${formData.phoneCountryCode}`,
+                      }}
+                      onChange={(selected) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          phoneCountryCode: selected.value,
+                        }))
+                      }
+                      menuPlacement="auto"
+                      menuPortalTarget={document.body}
+                      styles={{
+                        container: (base) => ({
+                          ...base,
+                          width: "100%",
+                        }),
+                        control: (base) => ({
+                          ...base,
+                          minHeight: "46px",
+                          borderColor: "#d1d5db",
+                          borderRadius: "0.5rem",
+                        }),
+                        indicatorsContainer: (base) => ({
+                          ...base,
+                          height: "46px",
+                        }),
+                        menu: (base) => ({
+                          ...base,
+                          maxHeight: 200,
+                        }),
+                        menuList: (base) => ({
+                          ...base,
+                          maxHeight: 200,
+                        }),
+                        menuPortal: (base) => ({
+                          ...base,
+                          zIndex: 9999,
+                        }),
+                      }}
+                    />
+                  </div>
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleInputChange}
+                    required
+                    inputMode="tel"
+                    maxLength={15}
+                    pattern="\d{6,15}"
+                    title="Enter 6 to 15 digits only"
+                    placeholder="98765 43210"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5BC2A7] outline-none transition-all"
+                  />
+                </div>
               </div>
 
               <div>
@@ -598,11 +745,11 @@ export default function LeadFormModal() {
                 <option value="other">Other</option>
               </select>
             </div>
-              
-              {/* captcha field */}
-                                       <div className="flex justify-center py-4">
-    <Recaptcha onVerify={setRecaptchaToken} />
-  </div>
+
+            {/* captcha field */}
+            <div className="flex justify-center py-4">
+              <Recaptcha onVerify={setRecaptchaToken} />
+            </div>
             {/* Submit */}
             <div className="pt-4">
               <button
@@ -617,8 +764,8 @@ export default function LeadFormModal() {
                 {isSubmitting
                   ? "Submitting..."
                   : submissionStatus === "success"
-                  ? "Request Sent!"
-                  : "Schedule My Free Consultation"}
+                    ? "Request Sent!"
+                    : "Schedule My Free Consultation"}
               </button>
             </div>
           </form>
