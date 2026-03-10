@@ -1,10 +1,12 @@
 "use client";
+import Image from "next/image";
 import { useContext, useEffect } from "react";
 import Testimonials from "@/components/Testimonials";
 import { Lztallcontext } from "@/context/Lztcontext";
 import FAQSection from "@/components/FAQSection";
 import HeroSection from "@/components/HeroSection";
 import SuccessStory from "@/components/SucessStory";
+import CertificatesSection from "@/components/CertificatesSection";
 
 export default function Clients() {
   useEffect(() => {
@@ -136,6 +138,10 @@ export default function Clients() {
           { Novalue: 15, indicator: "+", label: "Industries Served" },
         ]}
       />
+      
+            {/* certificate */}
+
+ <CertificatesSection />
 
       {/* LOGOS */}
       <section className="bg-white py-4 px-6 overflow-hidden">

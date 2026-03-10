@@ -19,6 +19,7 @@ import CardContainerBorder from "@/components/CardContainerBorder";
 import FAQSection from "@/components/FAQSection";
 import ContactUsForm from "@/components/ContactUsForm";
 import ScrollingLogosSection from "@/components/ScrollingLogosSection";
+import CertificatesSection from "@/components/CertificatesSection";
 
 export default function Global() {
   useEffect(() => {
@@ -202,7 +203,6 @@ export default function Global() {
 
   return (
     <>
-   
       <HeroSection
         title="Your Global Remote Work Partner"
         description="Tap into global talent, scale faster, and optimise costs with our remote work services designed for modern IT businesses."
@@ -224,6 +224,8 @@ export default function Global() {
         bannerimage="/assets/img/Global.jpg"
         keyFeaturesList={featuresForHero}
       />
+
+      <CertificatesSection />
 
       {/* Start Why Choose LogZero Technologies? */}
       <section id="services" className="py-16 px-6">

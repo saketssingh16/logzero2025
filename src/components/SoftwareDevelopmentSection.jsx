@@ -16,7 +16,7 @@ import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import ScrollingLogosSection from "@/components/ScrollingLogosSection";
-
+import CertificatesSection from "@/components/CertificatesSection";
 import ContactUsForm from "@/components/ContactUsForm";
 import {
   Users,
@@ -309,6 +309,8 @@ export default function Mission() {
         bannerimage="/assets/img/Unlock the Power of Custom Software Development for Your Business-hero section.webp"
         nostats={[]}
       />
+
+       <CertificatesSection />
 
       {/* Trusted partner section */}
       <section className="py-16 px-6">

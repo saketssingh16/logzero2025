@@ -13,6 +13,8 @@ import GreenButton from "@/components/GreenButton";
 import { Check, Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import ContactUsForm from "@/components/ContactUsForm";
 
+import CertificatesSection from "@/components/CertificatesSection";
+
 export default function Services() {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -112,6 +114,9 @@ export default function Services() {
         nostats={[]}
       />
 
+      {/* certificate */}
+
+      <CertificatesSection />
       {/* Our Services: Comprehensive Tech Solutions */}
       <section id="services" className="py-16 px-6">
         <div className="container mx-auto">
@@ -543,10 +548,9 @@ export default function Services() {
         subheading="Tell us about your project, and we'll get back to you within 24 hours with a tailored plan."
         contactCardTitle="Get in Touch"
         contactText=""
-         phone={{
+        phone={{
           label: "Expert Developer",
           number: "Skilled professionals with proven track records",
-          
         }}
         email={{
           label: "Quick Turnaround",

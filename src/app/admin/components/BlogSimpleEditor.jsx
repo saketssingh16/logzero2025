@@ -10,6 +10,7 @@ import {
   Italic,
   Underline,
   Strikethrough,
+
   AlignLeft,
   AlignCenter,
   AlignRight,
@@ -20,7 +21,7 @@ import {
   Code,
   X,
 } from "lucide-react";
-
+import { toast } from "react-hot-toast";
 import ImageHandler from "./ImageHandler";
 
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024; // 2MB
@@ -324,7 +325,7 @@ const BlogEditor = ({
     const h = imgH.trim() ? Number(imgH) : NaN;
 
     if (Number.isNaN(w) || Number.isNaN(h) || w <= 0 || h <= 0) {
-      alert("Enter valid width and height in px (e.g., 200 and 200).");
+      toast.error("Enter valid width and height in px (e.g., 200 and 200).");
       return;
     }
 
@@ -401,7 +402,7 @@ const BlogEditor = ({
     if (!selectedImage) {
         const restored = restoreSelection();
         if (!restored) {
-            alert("Please select text or click an image first to add a link");
+          toast.error("Please select text or click an image first to add a link");
             return;
         }
     }
@@ -643,7 +644,7 @@ const BlogEditor = ({
               defaultRatio="Free"
               onChange={async (croppedFile, dimensions) => {
                 if (croppedFile.size > MAX_IMAGE_BYTES) {
-                  alert("Image size must be less than 2MB");
+                  toast.error("Image size must be less than 2MB");
                   return;
                 }
                 const base64 = await fileToBase64(croppedFile);

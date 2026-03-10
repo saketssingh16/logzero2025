@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import Recaptcha from "@/components/Recaptcha";
 import logger from "@/lib/logger";
 import api from "@/lib/api";
+import toast from "react-hot-toast";
 
 const CONTACT_INQUIRY_ENDPOINT = `${(process.env.NEXT_PUBLIC_API_BASE_URL || "https://webapi.logzerotechnologies.com/api").replace(/\/$/, "")}/v1/inquiry/create`;
 
@@ -160,7 +161,7 @@ export default function ContactSection() {
         { submissionMeta },
         "Contact form blocked because reCAPTCHA is missing"
       );
-      alert("Please complete the reCAPTCHA verification.");
+      toast.error("Please complete the reCAPTCHA verification.");
       return;
     }
 
@@ -196,6 +197,9 @@ export default function ContactSection() {
           "Contact form submission succeeded"
         );
         setFormSucess(true);
+        toast.success(
+          responseData?.message || "Your form has been submitted successfully."
+        );
         setFormData({
           name: "",
           email: "",
@@ -215,9 +219,8 @@ export default function ContactSection() {
           },
           "Contact form submission failed"
         );
-        alert(
-          "Submission failed: " +
-            (responseData.message || "Please try again later.")
+        toast.error(
+          responseData?.message || "Submission failed. Please try again later."
         );
         setFormData({
           name: "",
@@ -230,11 +233,39 @@ export default function ContactSection() {
         }
       }
     } catch (error) {
-      if (error.name === "AbortError") {
+      const status = error?.response?.status;
+      const responseData = error?.response?.data;
+      const validationMessage = responseData?.errors?.[0]?.message;
+      const apiMessage = responseData?.message;
+
+      if (status === 429 && apiMessage) {
+        logger.warn(
+          {
+            submissionMeta,
+            endpoint: CONTACT_INQUIRY_ENDPOINT,
+            status,
+            responseMessage: apiMessage,
+          },
+          "Contact form blocked due to rate limiting / duplicate submission"
+        );
+        toast.error(apiMessage);
+      } else if (validationMessage) {
+        logger.warn(
+          {
+            submissionMeta,
+            endpoint: CONTACT_INQUIRY_ENDPOINT,
+            status,
+            validationMessage,
+          },
+          "Contact form submission failed due to validation error"
+        );
+        toast.error(validationMessage);
+      } else if (error.name === "AbortError" || error.code === "ERR_CANCELED") {
         logger.error(
           { submissionMeta, endpoint: CONTACT_INQUIRY_ENDPOINT },
           "Contact form submission aborted due to timeout"
         );
+        toast.error("The request timed out. Please try again.");
       } else {
         logger.error(
           {
@@ -244,6 +275,7 @@ export default function ContactSection() {
           },
           "Network error during contact form submission"
         );
+        toast.error("A network or server error occurred. Please try again.");
       }
       if (window.grecaptcha) {
         window.grecaptcha.reset();
@@ -310,6 +342,7 @@ export default function ContactSection() {
 
                   <form className="space-y-4" onSubmit={handleSubmit}>
                     <textarea
+                      required
                       name="detail"
                       onChange={handleChange}
                       value={formData.detail}
@@ -351,6 +384,7 @@ export default function ContactSection() {
                           Phone Number
                         </label>
                         <input
+                          required
                           type="tel"
                           name="phone"
                           onChange={handleChange}
@@ -425,7 +459,7 @@ export default function ContactSection() {
                       href="https://www.linkedin.com/company/logzero-technologies/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-[#0A77FF]"
+                      className="hover:text-[#0A77FF] transform transition-transform duration-300 hover:scale-110"
                     >
                       <Image
                         src="/assets/icons/linkedin.svg"
@@ -440,7 +474,7 @@ export default function ContactSection() {
                       href="https://x.com/logzerotech"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-[#0A77FF]"
+                      className="hover:text-[#0A77FF] transform transition-transform duration-300 hover:scale-110"
                     >
                       <Image
                         src="/assets/icons/Twitter.png"
@@ -455,7 +489,7 @@ export default function ContactSection() {
                       href="https://pinterest.com/logzerotechnologies"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-[#0A77FF]"
+                      className="hover:text-[#0A77FF] transform transition-transform duration-300 hover:scale-110"
                     >
                       <Image
                         src="/assets/icons/pinterest.png"
@@ -470,7 +504,7 @@ export default function ContactSection() {
                       href="https://www.google.com/search?sca_esv=c019091b52478373&rlz=1C1ONGR_en&sxsrf=AE3TifNuGL6qIljipNhKMWj9-YwwMAwJlg:1762851169715&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E08fmkHkhr3qf25clKYpHEKUVOWYYhzObx6QqdIkocQhTpncxHegMmEZA0qoZEnGltvXfWl_96NIomGxH9w3dcAcABMd9ZULuddluYtcaMreOw0cnQT0c8aGRQBkeB8GkuKQy6SQ3yA0N3umSgSfQQEJwb6J0vwVRwjT4oK-snHzs7RZ3riSG_Dw6niHgLaWw4v_mS8%3D&q=LogZero+Technologies+%7C+Web+%26+Mobile+App+Development,+Cloud+Services+%26+Data+Solutions+Reviews&sa=X&ved=2ahUKEwi35oyu3OmQAxWSyzgGHX2KAYIQ0bkNegQIJhAE&cshid=1762851205263191&biw=1366&bih=633&dpr=1"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-[#0A77FF]"
+                      className="hover:text-[#0A77FF] transform transition-transform duration-300 hover:scale-110"
                     >
                       <Image
                         src="/assets/icons/google-business.png"

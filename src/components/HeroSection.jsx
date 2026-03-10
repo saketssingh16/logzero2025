@@ -31,9 +31,10 @@ export default function HeroSection({
 }) {
   return (
     <section className="bggray2">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 ">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* LEFT CONTENT */}
-        <div className="gap-6 pt-[30px] pb-[30px] pl-6 xl:pl-[80px] lg:pl-[50px] md:pl-8 pr-6 lg:pr-[30px] md:pr-[0px]">
+        <div className="my-auto">
+           <div className="gap-6 pt-[30px] pb-[30px] pl-6 xl:pl-[80px] lg:pl-[50px] md:pl-8 pr-6 lg:pr-[30px] md:pr-[0px]">
           {/* Heading */}
           {title && (
             <h1 className={`${titlecolor ? "textblue7" : ""}`}>{title}</h1>
@@ -132,6 +133,8 @@ export default function HeroSection({
             </div>
           )}
         </div>
+        </div>
+       
 
         {/* RIGHT IMAGE */}
         <div className="relative w-full h-64 sm:h-80 md:h-[562px]">

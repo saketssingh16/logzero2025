@@ -5,6 +5,7 @@ import BlogEditor from "../../../../admin/components/BlogSimpleEditor";
 import MultiSelect from "../../../../admin/components/MultiSelect";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
+import { toast } from "react-hot-toast";
 
 const formatCreatedAtValue = (value) => {
   if (!value) return null;
@@ -50,6 +51,7 @@ export default function AddPostPage() {
     type: "blog_post",
     status: "draft",
     blogCategory: "",
+    recommendations: [],
     portfolioCategoryIds: [],
     solutionIds: [],
     technologyIds: [],
@@ -65,6 +67,9 @@ export default function AddPostPage() {
   });
 
   const [form, setForm] = useState(formRef.current);
+
+  const [recommendationOptions, setRecommendationOptions] = useState([]);
+  const [isRecommendationsLoading, setIsRecommendationsLoading] = useState(false);
 
   // ✅ Update ref whenever form state changes
   useEffect(() => {
@@ -86,6 +91,44 @@ export default function AddPostPage() {
     loadFilters();
   }, []);
 
+  const fetchRecommendations = async (categoryValue) => {
+    if (!categoryValue) {
+      setRecommendationOptions([]);
+      setForm((prev) =>
+        prev.recommendations && prev.recommendations.length
+          ? { ...prev, recommendations: [] }
+          : prev
+      );
+      return;
+    }
+
+    setIsRecommendationsLoading(true);
+    try {
+      const res = await api.get("/posts", {
+        params: {
+          type: "blog_post",
+          blogCategory: categoryValue,
+        },
+      });
+
+      const rows = res.data?.data?.rows || res.data?.rows || [];
+
+      const options = rows
+        .map((post) => ({
+          id: post.id,
+          name: post.metaTitle,
+        }))
+        .filter((opt) => opt.id && opt.name);
+
+      setRecommendationOptions(options);
+    } catch (error) {
+      console.error("Failed to load recommendations:", error);
+      setRecommendationOptions([]);
+    } finally {
+      setIsRecommendationsLoading(false);
+    }
+  };
+
   const handleBasicChange = (e) => {
     const { name, value } = e.target;
 
@@ -97,6 +140,18 @@ export default function AddPostPage() {
         popular: nextType === "case_study" ? false : prev.popular,
       }));
       setDirty(true);
+      return;
+    }
+
+    if (name === "blogCategory") {
+      const categoryValue = value;
+      setForm((prev) => ({
+        ...prev,
+        blogCategory: categoryValue,
+        recommendations: [],
+      }));
+      setDirty(true);
+      fetchRecommendations(categoryValue);
       return;
     }
 
@@ -185,7 +240,7 @@ export default function AddPostPage() {
     }
 
     if (file.size > MAX_BYTES) {
-      alert("Featured image is too large. Max size is 2 MB.");
+      toast.error("Featured image is too large. Max size is 2 MB.");
       return;
     }
 
@@ -193,7 +248,7 @@ export default function AddPostPage() {
       const { resizedFile, base64 } = await resizeFeaturedImageToStandard(file);
 
       if (resizedFile.size > MAX_BYTES) {
-        alert("Resized featured image is still above 2MB. Try another image.");
+        toast.error("Resized featured image is still above 2MB. Try another image.");
         return;
       }
 
@@ -205,7 +260,7 @@ export default function AddPostPage() {
       setDirty(true);
     } catch (err) {
       console.error("Featured image resize failed:", err);
-      alert("Failed to process featured image.");
+      toast.error("Failed to process featured image.");
     }
   };
 
@@ -221,6 +276,30 @@ export default function AddPostPage() {
       return {
         ...prev,
         [key]: exists ? arr.filter((x) => x !== id) : [...arr, id],
+      };
+    });
+    setDirty(true);
+  };
+
+  const handleToggleRecommendation = (id) => {
+    setForm((prev) => {
+      const current = prev.recommendations || [];
+      const exists = current.includes(id);
+      if (exists) {
+        return {
+          ...prev,
+          recommendations: current.filter((x) => x !== id),
+        };
+      }
+
+      if (current.length >= 5) {
+        toast.error("You can select up to 5 recommended blogs only.");
+        return prev;
+      }
+
+      return {
+        ...prev,
+        recommendations: [...current, id],
       };
     });
     setDirty(true);
@@ -313,6 +392,10 @@ export default function AddPostPage() {
       } else {
         payload.blogCategory = "";
       }
+
+      // Backend expects IDs under `recommendedPostIds` and returns
+      // full objects under `recommendations` in the response
+      payload.recommendedPostIds = currentForm.recommendations || [];
     }
 
     if (currentForm.type === "case_study") {
@@ -450,20 +533,20 @@ export default function AddPostPage() {
 
       // ✅ Validate required fields before submission
       if (!payload.metaTitle || payload.metaTitle === "Untitled Draft") {
-        alert("Please enter a meta title before publishing");
+        toast.error("Please enter a meta title before publishing");
         setIsSubmitting(false);
         return;
       }
 
       if (!payload.author || payload.author === "System") {
-        alert("Please enter an author name before publishing");
+        toast.error("Please enter an author name before publishing");
         setIsSubmitting(false);
         return;
       }
 
       // ✅ Validate blog category for blog posts
       if (form.type === "blog_post" && !form.blogCategory) {
-        alert("Please select a blog category before publishing");
+        toast.error("Please select a blog category before publishing");
         setIsSubmitting(false);
         return;
       }
@@ -483,17 +566,17 @@ export default function AddPostPage() {
       }
 
       if (res.status >= 200 && res.status < 300) {
-        alert("Post saved successfully!");
+        toast.success("Post saved successfully!");
         setDirty(false);
         router.push("/admin/dashboard/blogs");
       } else {
-        alert("Failed to save post");
+        toast.error("Failed to save post");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
       
       const errorMessage = error.response?.data?.message || error.message || "Unknown error";
-      alert(`Error saving post: ${errorMessage}`);
+      toast.error(`Error saving post: ${errorMessage}`);
       
       // ✅ Log detailed error
       if (error.response) {
@@ -672,21 +755,44 @@ export default function AddPostPage() {
             </div>
 
             {form.type === "blog_post" && (
-              <div>
-                <label className="block text-sm mb-1">Blog category</label>
-                <select
-                  name="blogCategory"
-                  value={form.blogCategory}
-                  onChange={handleBasicChange}
-                  className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
-                >
-                  <option value="">Select category</option>
-                  {filters.blogCategories.map((c) => (
-                    <option key={c.value} value={c.value}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm mb-1">Blog category</label>
+                  <select
+                    name="blogCategory"
+                    value={form.blogCategory}
+                    onChange={handleBasicChange}
+                    className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
+                  >
+                    <option value="">Select category</option>
+                    {filters.blogCategories.map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {form.blogCategory && (
+                  <div className="space-y-2">
+                    <MultiSelect
+                      label="Recommendations"
+                      options={recommendationOptions}
+                      selectedIds={form.recommendations || []}
+                      onChange={handleToggleRecommendation}
+                    />
+                    {isRecommendationsLoading && (
+                      <p className="text-xs text-blue-400">Loading recommendations...</p>
+                    )}
+                    {!isRecommendationsLoading &&
+                      form.blogCategory &&
+                      recommendationOptions.length === 0 && (
+                        <p className="text-xs text-gray-400">
+                          No recommendations available for this category.
+                        </p>
+                      )}
+                  </div>
+                )}
               </div>
             )}
 

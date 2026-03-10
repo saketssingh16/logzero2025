@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 import BlogEditor  from "../../../../../admin/components/BlogSimpleEditor"
 import MultiSelect from "../../../../../admin/components/MultiSelect";
 import api from "../../../../../../lib/api";
@@ -54,6 +55,8 @@ export default function EditPostPage() {
   const createdAtInputRef = useRef(null);
 
   const [deferCaseStudyFields, setDeferCaseStudyFields] = useState(false);
+  const [recommendationOptions, setRecommendationOptions] = useState([]);
+  const [isRecommendationsLoading, setIsRecommendationsLoading] = useState(false);
 
   const [form, setForm] = useState({
     metaTitle: "",
@@ -64,6 +67,7 @@ export default function EditPostPage() {
     type: "blog_post",
     status: "draft",
     blogCategory: "",
+    recommendations: [],
     portfolioCategoryIds: [],
     solutionIds: [],
     technologyIds: [],
@@ -156,7 +160,7 @@ export default function EditPostPage() {
     }
 
     if (file.size > MAX_BYTES) {
-      alert("Featured image is too large. Max size is 2 MB.");
+      toast.error("Featured image is too large. Max size is 2 MB.");
       return;
     }
 
@@ -164,7 +168,7 @@ export default function EditPostPage() {
       const { resizedFile, base64 } = await resizeFeaturedImageToStandard(file);
 
       if (resizedFile.size > MAX_BYTES) {
-        alert("Resized featured image is still above 2MB. Try another image.");
+        toast.error("Resized featured image is still above 2MB. Try another image.");
         return;
       }
 
@@ -175,7 +179,7 @@ export default function EditPostPage() {
       }));
     } catch (err) {
       console.error("Featured image resize failed:", err);
-      alert("Failed to process featured image.");
+      toast.error("Failed to process featured image.");
     }
   };
 
@@ -199,6 +203,10 @@ export default function EditPostPage() {
         const htmlContent = p.content?.blocks?.[0]?.data?.text ?? "<p></p>";
 
         const createdAtRaw = p.created_at ?? p.createdAt ?? "";
+
+        const recommendationIds =
+          p.recommendations?.map((r) => r?.recommendedPost?.id ?? r?.recommendedPostId).filter(Boolean) ?? [];
+
         setForm({
           metaTitle: p.metaTitle ?? "",
           slug: p.slug ?? "",
@@ -209,6 +217,7 @@ export default function EditPostPage() {
           type: p.type,
           status: p.status,
           blogCategory: p.blogCategory ?? "",
+          recommendations: recommendationIds,
           portfolioCategoryIds: p.portfolioCategories?.map((c) => c.id) ?? [],
           solutionIds: p.solutions?.map((s) => s.id) ?? [],
           technologyIds: p.technologies?.map((t) => t.id) ?? [],
@@ -222,6 +231,23 @@ export default function EditPostPage() {
           featuredImageBase64: p.featuredImageBase64 || "",
           featuredImageDesc: p.featuredImageDesc ?? "",
         });
+
+        if (p.type === "blog_post" && p.blogCategory) {
+          try {
+            const recRes = await api.get("/posts", {
+              params: { type: "blog_post", blogCategory: p.blogCategory },
+            });
+
+            const rows = recRes.data?.data?.rows || recRes.data?.rows || [];
+            const options = rows
+              .map((post) => ({ id: post.id, name: post.metaTitle }))
+              .filter((opt) => opt.id && opt.name);
+
+            setRecommendationOptions(options);
+          } catch (err) {
+            console.error("Failed to load recommendation options:", err);
+          }
+        }
       } catch (error) {
         console.error("Failed to load post data:", error);
       } finally {
@@ -322,6 +348,30 @@ export default function EditPostPage() {
     });
   };
 
+  const handleToggleRecommendation = (id) => {
+    setForm((prev) => {
+      const current = prev.recommendations || [];
+      const exists = current.includes(id);
+
+      if (exists) {
+        return {
+          ...prev,
+          recommendations: current.filter((x) => x !== id),
+        };
+      }
+
+      if (current.length >= 5) {
+        toast.error("You can select up to 5 recommended blogs only.");
+        return prev;
+      }
+
+      return {
+        ...prev,
+        recommendations: [...current, id],
+      };
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (submitting) return;
@@ -370,6 +420,8 @@ export default function EditPostPage() {
       payload.challenges = null;
       payload.solution = null;
       payload.result = null;
+
+      payload.recommendedPostIds = form.recommendations || [];
     }
 
     if (form.type === "case_study") {
@@ -388,7 +440,7 @@ export default function EditPostPage() {
       }
     } catch (error) {
       console.error("Update failed:", error);
-      alert("Failed to update post.");
+      toast.error("Failed to update post.");
     } finally {
       setSubmitting(false);
     }
@@ -576,21 +628,44 @@ export default function EditPostPage() {
             </div>
 
             {form.type === "blog_post" && (
-              <div>
-                <label className="block text-sm mb-1">Blog category</label>
-                <select
-                  name="blogCategory"
-                  value={form.blogCategory}
-                  onChange={handleBasicChange}
-                  className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
-                >
-                  <option value="">Select category</option>
-                  {filters.blogCategories.map((c) => (
-                    <option key={c.value} value={c.value}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm mb-1">Blog category</label>
+                  <select                  
+                    name="blogCategory"
+                    value={form.blogCategory}
+                    onChange={handleBasicChange}
+                    className="w-full rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
+                  >
+                    <option value="">Select category</option>
+                    {filters.blogCategories.map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {form.blogCategory && (
+                  <div className="space-y-2">
+                    <MultiSelect
+                      label="Recommendations"
+                      options={recommendationOptions}
+                      selectedIds={form.recommendations || []}
+                      onChange={handleToggleRecommendation}
+                    />
+                    {isRecommendationsLoading && (
+                      <p className="text-xs text-blue-400">Loading recommendations...</p>
+                    )}
+                    {!isRecommendationsLoading &&
+                      form.blogCategory &&
+                      recommendationOptions.length === 0 && (
+                        <p className="text-xs text-gray-400">
+                          No recommendations available for this category.
+                        </p>
+                      )}
+                  </div>
+                )}
               </div>
             )}
 

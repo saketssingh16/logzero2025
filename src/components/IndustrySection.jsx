@@ -10,7 +10,7 @@ import { Phone, Mail, MapPin, Send, Target, Users, Zap } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
 import ScrollingLogosSection from "./ScrollingLogosSection";
 import ContactUsForm from "@/components/ContactUsForm";
-
+import CertificatesSection from "@/components/CertificatesSection";
 const BgColors2 = [
   "bgblue",
   "peachgreen",
@@ -130,6 +130,8 @@ export default function IndustryWeServe() {
           { Novalue: 10, indicator: "+", label: "Industries Served" },
         ]}
       />
+
+      <CertificatesSection />
 
       {/* Comprehensive Services */}
       <section id="services" className="py-16 px-6">

@@ -20,6 +20,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import logger from "@/lib/logger";
 import api from "@/lib/api";
+import toast from "react-hot-toast";
 
 const CONTACT_INQUIRY_ENDPOINT = `${(process.env.NEXT_PUBLIC_API_BASE_URL || "https://webapi.logzerotechnologies.com/api").replace(/\/$/, "")}/v1/consultation/create`;
 const COUNTRY_CODE_REGEX = /^\+\d{1,4}$/;
@@ -106,6 +107,10 @@ export default function LeadFormModal() {
         consultationDateTime: "",
         hearAboutUs: "",
       });
+      setSubmissionStatus(null);
+      setErrorMessage("");
+      setIsSubmitting(false);
+      setRecaptchaToken(null);
     }
   }, [open]);
 
@@ -182,7 +187,7 @@ export default function LeadFormModal() {
       const day = date.getDay();
 
       if (day === 0 || day === 6) {
-        alert("Weekends are not available. Please choose a weekday.");
+        toast.error("Weekends are not available. Please choose a weekday.");
         return;
       }
 
@@ -220,7 +225,7 @@ export default function LeadFormModal() {
 
     const day = date.getDay();
     if (day === 0 || day === 6) {
-      alert("Weekends are not available. Please choose a weekday.");
+      toast.error("Weekends are not available. Please choose a weekday.");
       return;
     }
 
@@ -248,21 +253,13 @@ export default function LeadFormModal() {
     const submissionMeta = buildFormLogMeta(formData);
     logger.debug({ submissionMeta }, "Submitting lead form");
 
-    // 1. Find the reCAPTCHA response token
-    // The reCAPTCHA widget inserts a hidden input field named 'g-recaptcha-response'
-    const recaptchaTokenField = document.querySelector(
-      '[name="g-recaptcha-response"]',
-    );
-    const recaptchaToken = recaptchaTokenField
-      ? recaptchaTokenField.value
-      : null;
-
+    // Use the reCAPTCHA token provided by the Recaptcha component
     if (!recaptchaToken) {
       logger.error(
         { submissionMeta },
         "Lead form blocked because reCAPTCHA is missing",
       );
-      alert("Please complete the reCAPTCHA verification.");
+      toast.error("Please complete the reCAPTCHA verification.");
       // Optional: If you are using explicit rendering, you might need to reset/re-render the widget here.
       return;
     }
@@ -274,17 +271,17 @@ export default function LeadFormModal() {
       !formData.consultationDateTime ||
       !formData.hearAboutUs
     ) {
-      alert("Please fill all required fields.");
+      toast.error("Please fill all required fields.");
       return;
     }
 
     if (!COUNTRY_CODE_REGEX.test(formData.phoneCountryCode)) {
-      alert("Please select a valid country code.");
+      toast.error("Please select a valid country code.");
       return;
     }
 
     if (!PHONE_NUMBER_REGEX.test(formData.phoneNumber)) {
-      alert("Please enter a valid phone number (6 to 15 digits only).");
+      toast.error("Please enter a valid phone number (6 to 15 digits only).");
       return;
     }
 
@@ -353,7 +350,9 @@ export default function LeadFormModal() {
           hearAboutUs: "",
         });
 
-        alert("Your form has been submitted successfully.");
+        toast.success(
+          responseData?.message || "Your form has been submitted successfully.",
+        );
         // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
         if (window.grecaptcha) {
           window.grecaptcha.reset();
@@ -372,7 +371,8 @@ export default function LeadFormModal() {
         const serverError =
           responseData.message || responseData.error || "Unknown server error.";
         setErrorMessage(`Submission failed: ${serverError}`);
-        console.error("API submission failed:", response.status, serverError);
+        toast.error(serverError);
+        console.error("API submission failed:", status, serverError);
         // alert(`Form submission failed: ${response.message}`);
         // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
         if (window.grecaptcha) {
@@ -380,26 +380,61 @@ export default function LeadFormModal() {
         }
       }
     } catch (err) {
-      if (err.name === "AbortError" || err.code === "ERR_CANCELED") {
+      const status = err?.response?.status;
+      const apiMessage = err?.response?.data?.message;
+      const validationMessage = err?.response?.data?.errors?.[0]?.message;
+
+      if (status === 429 && apiMessage) {
+        logger.warn(
+          {
+            submissionMeta,
+            endpoint: CONTACT_INQUIRY_ENDPOINT,
+            status,
+            responseMessage: apiMessage,
+          },
+          "Lead form blocked due to rate limiting / duplicate submission",
+        );
+        setSubmissionStatus("error");
+        setErrorMessage(apiMessage);
+        toast.error(apiMessage);
+      } else if (validationMessage) {
+        logger.warn(
+          {
+            submissionMeta,
+            endpoint: CONTACT_INQUIRY_ENDPOINT,
+            status,
+            validationMessage,
+          },
+          "Lead form submission failed due to validation error",
+        );
+        setSubmissionStatus("error");
+        setErrorMessage(validationMessage);
+        toast.error(validationMessage);
+      } else if (err.name === "AbortError" || err.code === "ERR_CANCELED") {
         logger.error({
           submissionMeta,
           endpoint: CONTACT_INQUIRY_ENDPOINT,
           error: "Request timed out",
         });
+        setSubmissionStatus("error");
+        setErrorMessage("The request timed out. Please try again.");
+        toast.error("The request timed out. Please try again.");
       } else {
         logger.error(
           {
             submissionMeta,
             endpoint: CONTACT_INQUIRY_ENDPOINT,
+            status,
             error: err.message,
           },
           "Network error during contact form submission",
         );
+        setSubmissionStatus("error");
+        setErrorMessage(
+          "A network or server error occurred. Please try again.",
+        );
+        toast.error("A network or server error occurred. Please try again.");
       }
-      setSubmissionStatus("error");
-      setErrorMessage(
-        "A network error occurred. Please check your connection.",
-      );
       // 3. BEST PRACTICE: Reset the reCAPTCHA widget after a successful submission
       if (window.grecaptcha) {
         window.grecaptcha.reset();

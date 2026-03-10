@@ -10,7 +10,7 @@ import CardContainerBorder from "@/components/CardContainerBorder";
 import GreenButton from "@/components/GreenButton";
 import Testimonials from "@/components/Testimonials";
 import FAQSection from "@/components/FAQSection";
-
+import CertificatesSection from "@/components/CertificatesSection";
 import ContactUsForm from "@/components/ContactUsForm";
 import {
   Check,
@@ -170,6 +170,8 @@ export default function data() {
         bannerimage="/assets/img/Solutions That Turn Strategy into Measurable Results-herosection.webp"
         nostats={[]}
       />
+
+       <CertificatesSection />
 
       {/* The Roadblocks Holding Teams Back */}
       <section className="py-16 px-6  overflow-hidden">
