@@ -14,6 +14,7 @@ import SuccessStory from "@/components/SucessStory";
 import FAQSection from "@/components/FAQSection";
 
 import ContactUsForm from "@/components/ContactUsForm";
+import CertificatesSection from "@/components/CertificatesSection";
 
 const BgColors = [
   "bgblue",
@@ -130,7 +131,6 @@ export default function UxServices() {
 
   return (
     <>
-   
       <HeroSection
         title="Design Experiences That Users Love"
         description="Our UX experts design with empathy — delivering digital products that are intuitive, engaging, and conversion-driven."
@@ -156,6 +156,8 @@ export default function UxServices() {
           { Novalue: 20, indicator: "+", label: "Active Projects" },
         ]}
       />
+
+      <CertificatesSection />
 
       {/* Service Section Start */}
       <section id="services" className="py-16 px-6 bggray1">

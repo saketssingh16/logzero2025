@@ -12,6 +12,7 @@ import HeroSection from "@/components/HeroSection";
 import SuccessStory from "@/components/SucessStory";
 import FAQSection from "@/components/FAQSection";
 import ContactUsForm from "@/components/ContactUsForm";
+import CertificatesSection from "@/components/CertificatesSection";
 
 
 
@@ -115,6 +116,8 @@ export default function AboutUs() {
         ]}
       />
 
+      {/* certified section */}
+ <CertificatesSection />
       {/* trusted section */}
 
       <Trusted

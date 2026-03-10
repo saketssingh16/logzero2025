@@ -10,6 +10,7 @@ export default function MultiSelect({
   onChange,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const containerRef = useRef(null);
 
   const safeOptions = Array.isArray(options) ? options : [];
@@ -30,6 +31,14 @@ export default function MultiSelect({
     [safeSelectedIds, optionsById]
   );
 
+  const filteredOptions = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return safeOptions;
+    return safeOptions.filter((opt) =>
+      (opt.name || "").toLowerCase().includes(query)
+    );
+  }, [search, safeOptions]);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -43,6 +52,12 @@ export default function MultiSelect({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen && search) {
+      setSearch("");
+    }
+  }, [isOpen, search]);
 
   return (
     <div className="relative" ref={containerRef}>
@@ -80,8 +95,18 @@ export default function MultiSelect({
       {/* Dropdown Menu */}
       {isOpen && (
         <div className="absolute z-20 w-full mt-1 bg-zinc-900 border border-zinc-800 rounded-md shadow-xl max-h-60 overflow-auto">
-          {safeOptions.length > 0 ? (
-            safeOptions.map((opt) => {
+          <div className="sticky top-0 bg-zinc-900 border-b border-zinc-800 p-2">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={`Search ${label.toLowerCase()}...`}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-2 text-xs text-gray-200 placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((opt) => {
               const isSelected = selectedIdSet.has(opt.id);
               return (
                 <div
@@ -106,7 +131,7 @@ export default function MultiSelect({
             })
           ) : (
             <div className="px-3 py-2 text-sm text-gray-500">
-              No options available
+              No options found
             </div>
           )}
         </div>

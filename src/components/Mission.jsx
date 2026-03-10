@@ -7,7 +7,7 @@ import Image from "next/image";
 import CardContainer from "@/components/CardContainer";
 import SuccessStory from "@/components/SucessStory";
 import CountUp from "react-countup";
-
+import CertificatesSection from "@/components/CertificatesSection";
 
 import FAQSection from "@/components/FAQSection";
 
@@ -95,6 +95,10 @@ export default function Mission() {
         bannerimage="/assets/img/MISSION-HERO.webp"
         nostats={[]}
       />
+
+      
+            {/* certificate */}
+ <CertificatesSection />
 
       {/* The Purpose Behind Our Passion section */}
       <section className="py-16 px-6">

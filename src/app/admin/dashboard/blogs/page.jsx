@@ -15,6 +15,7 @@ import {
   Loader2,
   RefreshCw,
 } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 // ---------------- Small UI helper: checkbox multi-select ----------------
 function CheckboxGroup({
@@ -254,9 +255,10 @@ export default function BlogDashboard() {
       await api.delete(`/posts/${id}`);
       fetchPosts();
     } catch (err) {
-      alert("Failed to delete post");
+      toast.error("Failed to delete post");
     }
   };
+
 
   const selectedSummary = useMemo(() => {
     if (!isCaseStudyType) return null;

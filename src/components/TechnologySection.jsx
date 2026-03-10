@@ -19,7 +19,7 @@ import { Lztallcontext } from "@/context/Lztcontext";
 import Image from "next/image";
 import GreenButton from "@/components/GreenButton";
 import ContactUsForm from "@/components/ContactUsForm";
-
+import CertificatesSection from "@/components/CertificatesSection";
 export default function solutions() {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -99,6 +99,8 @@ export default function solutions() {
         bannerimage="/assets/img/Turning Innovation into Impact with CuttingEdge-heroSection.webp"
         nostats={[]}
       />
+
+       <CertificatesSection />
 
       {/* Why Our Technology Stack Matters */}
       <section className="py-16 px-6">

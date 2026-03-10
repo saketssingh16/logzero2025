@@ -7,6 +7,7 @@ import api from "@/lib/api";
 import { Lztallcontext } from "@/context/Lztcontext";
 import FAQSection from "@/components/FAQSection";
 import ScrollingLogosSection from "@/components/ScrollingLogosSection";
+import CertificatesSection from "@/components/CertificatesSection";
 import {
   Eye,
   Target,
@@ -231,7 +232,9 @@ export default function HomePageClient() {
         ]}
       />
 
-      <section className="bggray1 px-6 animate-zoomIn ">
+      <CertificatesSection />
+
+      <section className="bggray1 px-6 animate-zoomIn pb-16">
         <div className="container mx-auto ">
           <div className="text-center py-16">
             <h2 className="">About LogZero Technologies</h2>
@@ -301,40 +304,8 @@ export default function HomePageClient() {
             </div>
           </div>
 
-          <div className="py-16 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-8 text-center">
-            <div className="text-center">
-              <div className=" flex items-center justify-center  mx-auto">
-                {/* <UsersIcon className="text-[#ffffff] text-xl" /> */}
-                <Image src={batch1} className="" alt="year of experience image" />
-              </div>
-              <h4 className="mt-3">11+ Years Experience</h4>
-              <p className="mt-2 subtext subtextcolor px-4">
-                Delivering exceptional IT solutions since 2014 to drive business growth through reliable development, innovation, and expert support.
-              </p>
-            </div>
+          
 
-            <div className="text-center">
-              <div className=" flex items-center justify-center  mx-auto">
-                {/* <UsersIcon className="text-[#ffffff] text-xl" /> */}
-                <Image src={batch2} className="" alt="ISO 9001 and 27001 Certified" />
-              </div>
-              <h4 className="mt-3">ISO 9001 and 27001 Certified</h4>
-              <p className="mt-2 subtext subtextcolor px-4">
-              Quality and information security certified, ensuring secure and consistent delivery.
-              </p>
-            </div>
-
-            <div className="text-center">
-             <div className=" flex items-center justify-center  mx-auto">
-                {/* <UsersIcon className="text-[#ffffff] text-xl" /> */}
-                <Image src={batch3} className="" alt="DesignRush" />
-              </div>
-              <h4 className="mt-3">Industry Recognition</h4>
-              <p className="mt-2 subtext subtextcolor px-4">
-              Proudly recognized by DesignRush as one of the Top Web Development Companies (2025).
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 

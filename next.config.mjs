@@ -44,6 +44,11 @@ const nextConfig = {
         destination: '/case-studies/',
         permanent: true,
       },
+      //  {
+      //   source: '/Contact-Us',
+      //   destination: '/contact-us',
+      //   permanent: true,
+      // },
     ]
   },
 }

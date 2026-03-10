@@ -5,10 +5,32 @@ import PropTypes from "prop-types";
 import Recaptcha from "./Recaptcha";
 import logger from "@/lib/logger";
 import api from "@/lib/api";
+import toast from "react-hot-toast";
 // import connectImage from "../../public/assets/img/connectwithus.webp";
 import connectImage from "../../public/assets/img/connectwithus.png";
 // const CONTACT_INQUIRY_ENDPOINT = `${(process.env.NEXT_PUBLIC_API_BASE_URL || "https://webapi.logzerotechnologies.com/api").replace(/\/$/, "")}/v1/consultation/create-inquiry`;
 const CONTACT_INQUIRY_ENDPOINT = `${(process.env.NEXT_PUBLIC_API_BASE_URL || "https://webapi.logzerotechnologies.com/api").replace(/\/$/, "")}/v1/consultation/create-inquiry`;
+
+const maskEmail = (email = "") => {
+  if (!email.includes("@")) {
+    return email || undefined;
+  }
+  const [local, domain] = email.split("@");
+  if (!local) {
+    return `*@${domain}`;
+  }
+  const safeLocal =
+    local.length <= 2 ? `${local[0]}*` : `${local.slice(0, 2)}***`;
+  return `${safeLocal}@${domain}`;
+};
+
+const buildFormLogMeta = (data = {}) => ({
+  name: data.name?.trim() || undefined,
+  email: data.email ? maskEmail(data.email) : undefined,
+  hasPhone: Boolean(data.phone),
+  phoneEnding: data.phone ? data.phone.slice(-2) : undefined,
+  detailLength: data.detail?.length || 0,
+});
 
 export default function ContactSection({
   id = "contact",
@@ -74,20 +96,13 @@ export default function ContactSection({
     const submissionMeta = buildFormLogMeta(formData);
     logger.debug({ submissionMeta }, "Submitting contact form");
 
-    // The reCAPTCHA widget inserts a hidden input field named 'g-recaptcha-response'
-    const recaptchaTokenField = document.querySelector(
-      '[name="g-recaptcha-response"]',
-    );
-    const recaptchaToken = recaptchaTokenField
-      ? recaptchaTokenField.value
-      : null;
-
+    // Use the reCAPTCHA token provided by the Recaptcha component
     if (!recaptchaToken) {
       logger.warn(
         { submissionMeta },
         "Contact form blocked because reCAPTCHA is missing",
       );
-      alert("Please complete the reCAPTCHA verification.");
+      toast.error("Please complete the reCAPTCHA verification.");
       // Optional: If you are using explicit rendering, you might need to reset/re-render the widget here.
       return;
     }
@@ -105,6 +120,10 @@ export default function ContactSection({
 
     if (!formData.detail.trim()) {
       errors.detail = "Please tell us about your project.";
+    }
+
+    if (!formData.phone.trim()) {
+      errors.phone = "Phone number is required.";
     }
 
     if (Object.keys(errors).length > 0) {
@@ -145,6 +164,9 @@ export default function ContactSection({
 
         // console.log(responseData);
         setFormSucess(true);
+        toast.success(
+          responseData?.message || "Your form has been submitted successfully.",
+        );
         setFormData({
           name: "",
           email: "",
@@ -164,18 +186,48 @@ export default function ContactSection({
           },
           "Contact form submission failed",
         );
-        alert(`Form submission failed: ${responseData.message}`);
+        toast.error(
+          responseData?.message || "Form submission failed. Please try again.",
+        );
         if (window.grecaptcha) {
           window.grecaptcha.reset();
         }
       }
     } catch (error) {
-      if (error.name === "AbortError") {
+      const status = error?.response?.status;
+      const responseData = error?.response?.data;
+      const validationMessage = responseData?.errors?.[0]?.message;
+      const apiMessage = responseData?.message;
+
+      if (status === 429 && apiMessage) {
+        logger.warn(
+          {
+            submissionMeta,
+            endpoint: CONTACT_INQUIRY_ENDPOINT,
+            status,
+            responseMessage: apiMessage,
+          },
+          "Contact form blocked due to rate limiting / duplicate submission",
+        );
+        toast.error(apiMessage);
+      } else if (validationMessage) {
+        logger.warn(
+          {
+            submissionMeta,
+            endpoint: CONTACT_INQUIRY_ENDPOINT,
+            status,
+            validationMessage,
+          },
+          "Contact form submission failed due to validation error",
+        );
+        toast.error(validationMessage);
+      } else if (error.name === "AbortError" || error.code === "ERR_CANCELED") {
         logger.error({
           submissionMeta,
           endpoint: CONTACT_INQUIRY_ENDPOINT,
           error: "Request timed out",
         });
+        toast.error("The request timed out. Please try again.");
       } else {
         logger.error(
           {
@@ -185,6 +237,7 @@ export default function ContactSection({
           },
           "Network error during contact form submission",
         );
+        toast.error("A network or server error occurred. Please try again.");
       }
 
       console.error("Error submitting form:", error);
@@ -315,9 +368,10 @@ export default function ContactSection({
               <div className="grid grid-cols-1 gap-5">
                 <div className="space-y-2">
                   <label className="block text-[15px] leading-[22px] font-[600] text-[#111827] font-inter">
-                    Full Name
+                    Full Name <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
+                     required
                     name="name"
                     type="text"
                     onChange={handleChange}
@@ -334,9 +388,10 @@ export default function ContactSection({
 
                 <div className="space-y-2 ">
                   <label className="block text-[15px] leading-[22px] font-[600] text-[#111827] font-inter">
-                    Email Address
+                    Email Address <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
+                    required
                     name="email"
                     type="email"
                     placeholder="Your @email.com"
@@ -355,10 +410,10 @@ export default function ContactSection({
               <div className="grid grid-cols-1 gap-5">
                 <div className="space-y-2">
                   <label className="block text-[15px] leading-[22px] font-[600] text-[#111827] font-inter">
-                    Phone Number{" "}
-                    <span className="text-slate-400">(Optional)</span>
+                    Phone Number <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
+                    required
                     name="phone"
                     onChange={handleChange}
                     value={formData.phone}
@@ -366,14 +421,20 @@ export default function ContactSection({
                     placeholder="+91 95674 78449"
                     className="block w-full box-border bg-white text-[#111827] font-inter text-[15px] leading-[22px] border border-[#E5E5E7] rounded-[6px] px-[12px] py-[12px] placeholder-slate-400 outline-none ring-emerald-500 focus:border-emerald-500 focus:ring-2 transition-all duration-300"
                   />
+                  {formErrors.phone && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors.phone}
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="block text-[15px] leading-[22px] font-[600] text-[#111827] font-inter">
-                  Project Details
+                  Project Details <span className="text-red-500 ml-1">*</span>
                 </label>
                 <textarea
+                   required
                   name="detail"
                   rows={4}
                   onChange={handleChange}

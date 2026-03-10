@@ -37,6 +37,7 @@ import {
 import CardContainer from "@/components/CardContainer";
 import CTA from "@/components/CTA";
 import HeroSection from "@/components/HeroSection";
+import CertificatesSection from "@/components/CertificatesSection";
 
 import WebDevelopmentbanner from "../../public/assets/img/web-development-banner.webp";
 import WhiteButton from "@/components/WhiteButton";
@@ -191,7 +192,6 @@ const Services = () => {
 
   return (
     <>
-    
       <HeroSection
         title="Build Scalable, Modern Websites That Convert"
         description="Empower your business with fast, responsive, and SEO-optimized web development solutions tailored to your goals."
@@ -218,6 +218,8 @@ const Services = () => {
           { Novalue: 100, indicator: "+", label: "Industries Served" },
         ]}
       />
+
+      <CertificatesSection />
 
       {/* What We Do – Powerful Web Development Capabilities Start */}
       <section id="services" className="py-16 px-6 bgblue1">

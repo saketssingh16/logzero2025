@@ -30,6 +30,7 @@ import Testimonials from "@/components/Testimonials";
 import HeroSection from "@/components/HeroSection";
 
 import ContactUsForm from "@/components/ContactUsForm";
+import CertificatesSection from "@/components/CertificatesSection";
 
 function ChevronDownIcon({ className }) {
   return (
@@ -304,7 +305,6 @@ export default function MobileDevelopment() {
 
   return (
     <>
-      
       <HeroSection
         title="Custom Mobile App Development for Android & iOS"
         description="From concept to launch, we build mobile apps that deliver performance, usability, and business growth"
@@ -329,6 +329,8 @@ export default function MobileDevelopment() {
           { Novalue: 99, indicator: "%", label: "Success Rate" },
         ]}
       />
+
+      <CertificatesSection />
 
       {/* <Trusted /> */}
       <Trusted

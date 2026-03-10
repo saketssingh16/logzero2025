@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -27,7 +28,11 @@ export default function ClientLayout({ children }) {
     <BreadcrumbsProvider>
       {!isAdminRoute && <Header />}
       <main className={!isAdminRoute ? "mt-[77px]" : ""}>
-        {!isAdminRoute && <GlobalBreadcrumbBar />}
+        {!isAdminRoute && (
+          <Suspense fallback={null}>
+            <GlobalBreadcrumbBar />
+          </Suspense>
+        )}
         {children}
       </main>
       {!isAdminRoute && <ScrollToTopButton />}

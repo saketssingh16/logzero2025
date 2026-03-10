@@ -41,6 +41,7 @@ import Testimonials from "@/components/Testimonials";
 
 import FAQSection from "@/components/FAQSection";
 import ContactUsForm from "@/components/ContactUsForm";
+import CertificatesSection from "@/components/CertificatesSection";
 
 const BgColors = [
   "bgblue5",
@@ -213,7 +214,6 @@ export default function CloudServices() {
 
   return (
     <>
-      
 
       <HeroSection
         title="Scale Faster with Reliable Cloud Solutions"
@@ -235,6 +235,8 @@ export default function CloudServices() {
         bannerimage="/assets/img/developer-banner.webp"
         nostats={[]}
       />
+
+      <CertificatesSection />
 
       {/* LogZero Technologies: Your Trusted Partner in Cloud Solutio Start */}
       <section className="py-16 px-6">

@@ -12,6 +12,7 @@ import CounterNo from "@/components/CounterNo";
 import FAQSection from "@/components/FAQSection";
 import SuccessStory from "@/components/SucessStory";
 import ContactUsForm from "@/components/ContactUsForm";
+import CertificatesSection from "@/components/CertificatesSection";
 import {
   Search,
   PenTool,
@@ -104,7 +105,6 @@ export default function UI() {
 
   return (
     <>
-      
       <HeroSection
         title=" Beautiful, Functional UI Design That Engages Users"
         titlecolor={false}
@@ -129,6 +129,8 @@ export default function UI() {
         bannerimage="/assets/img/UI-Design-HeroSection.webp"
         nostats={[]}
       />
+
+      <CertificatesSection />
 
       {/* Trusted by Industry Leaders */}
 

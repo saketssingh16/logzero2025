@@ -9,6 +9,7 @@ import GreenButton from "@/components/GreenButton";
 import Testimonials from "@/components/Testimonials";
 
 import FAQSection from "@/components/FAQSection";
+import CertificatesSection from "@/components/CertificatesSection";
 
 export default function UxServices() {
   useEffect(() => {
@@ -60,7 +61,6 @@ export default function UxServices() {
 
   return (
     <>
-      
       <HeroSection
         title="Reliable Testing & QA Services"
         description="From functional and performance testing to full QA lifecycle support—our team delivers high-quality, bug-free software solutions."
@@ -90,6 +90,8 @@ export default function UxServices() {
           { Novalue: "50", indicator: "+", label: "Technologies" },
         ]}
       />
+
+      <CertificatesSection />
 
       {/* Transform Your QA Challenges */}
       <section className="py-16 px-6">

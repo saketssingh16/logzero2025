@@ -8,6 +8,7 @@ import CardContainerBorder from "@/components/CardContainerBorder";
 import GreenButton from "@/components/GreenButton";
 import SuccessStory from "@/components/SucessStory";
 import ContactUsForm from "@/components/ContactUsForm";
+import CertificatesSection from "@/components/CertificatesSection";
 import {
   Users,
   Headset,
@@ -161,6 +162,8 @@ export default function DataManagementPage() {
         bannerimage="/assets/img/Data Management Services That Power Smarter Business Decisions-hero section.webp"
         nostats={[]}
       />
+
+        <CertificatesSection />
 
       {/* Understanding Data Management in Today's Business World */}
       <section className="py-16 px-6">

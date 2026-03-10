@@ -39,7 +39,7 @@ import CounterNo from "@/components/CounterNo";
 import SuccessStory from "@/components/SucessStory";
 
 import ContactUsForm from "@/components/ContactUsForm";
-
+import CertificatesSection from "@/components/CertificatesSection";
 
 const BgColors = [
   "bgblue5",
@@ -121,9 +121,11 @@ export default function DeveloperForHire() {
         nostats={[
           { Novalue: 150, indicator: "+", label: "Developers Hired" },
           { Novalue: 98, indicator: "%", label: "Success Rate" },
-          { Novalue: 50, indicator: "+", label: "Technologies Rate" },
+          { Novalue: 50, indicator: "+", label: "Technologies" },
         ]}
       />
+
+       <CertificatesSection />
 
       {/* Service Sectio Start */}
       <section id="services" className="py-16 px-6">
