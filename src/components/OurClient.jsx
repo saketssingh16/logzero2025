@@ -14,7 +14,7 @@ export function Trusted({ logos = defaultLogos }) {
       <div className="max-w-[1200px] mx-auto px-4">
         <div className="text-center mb-8 text-black">
           <h4 className="text-[24px] md:text-[28px] font-normal leading-[1.4] text-center text-black mb-2">
-            Our Client
+            Our <span className="text-primary">Client</span> 
           </h4>
           <p className="text-base opacity-85">
             Empowering Your Success, Every Step of the Way.

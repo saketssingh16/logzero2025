@@ -97,7 +97,8 @@ export default function UxServices() {
       <section className="py-16 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-semibold mb-2">
-            Transform Your QA Challenges
+            Transform Your <span className="text-primary">QA</span>{" "}
+            <span className="text-primary">Challenges</span>
           </h2>
           <p className="mb-12 max-w-2xl mx-auto">
             We understand the pain points in modern software testing and provide
@@ -158,7 +159,10 @@ export default function UxServices() {
       <section className="py-16 px-6 bgblue3">
         <div className="container mx-auto">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center">Our Proven Testing Process</h2>
+            <h2 className="mb-4 text-center">
+              Our Proven <span className="text-primary">Testing</span>{" "}
+              <span className="text-primary">Process</span>
+            </h2>
             <p className="max-w-[65%]  text-center mx-auto">
               A systematic 6-step methodology that ensures comprehensive testing
               and quality assurance for your projects
@@ -262,7 +266,7 @@ export default function UxServices() {
       <section className="py-16 px-6">
         <div className="container mx-auto">
           <div className="text-center">
-            <h2 className="mb-2">Industries We Serve</h2>
+            <h2 className="mb-2"><span className="text-primary">Industries</span> We Serve</h2>
             <p className="max-w-[80%] mx-auto">
               Our expertise spans across diverse industries, delivering tailored
               UI designs that meet specific market needs and user expectations.
@@ -403,7 +407,7 @@ export default function UxServices() {
         <div className="container mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-900">
-              What Sets Us Apart
+              <h2 className="mb-4">What <span className="text-primary">Sets</span> Us <span className="text-primary">Apart</span></h2>
             </h2>
             <p className="max-w-[55%] mx-auto text-center mt-2">
               Discover the LogZero difference that makes us the preferred choice

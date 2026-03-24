@@ -178,7 +178,11 @@ export default function data() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              The Roadblocks Holding Teams Back
+              The
+              <span className="text-primary"> Roadblocks </span>
+              Holding
+              <span className="text-primary"> Teams </span>
+              Back
             </h2>
             <p className="text-center max-w-full md:max-w-[85%] mx-auto">
               Your teams juggle manual handoffs, siloed systems, and unclear
@@ -232,7 +236,9 @@ export default function data() {
         <div className="container mx-auto">
           <div className="pb-2 md:max-w-[65%] items-center mx-auto">
             <h2 className="mb-4 text-center text-3xl md:text-4xl font-bold">
-              Explore Our Core&nbsp;Solution Areas
+              Explore Our
+              <span className="text-primary"> Core Solutions </span>
+              Areas
             </h2>
           </div>
 
@@ -280,7 +286,11 @@ export default function data() {
         <div className="container mx-auto">
           <div className="headingbox pb-2 mb-10">
             <h2 className="mb-4 text-center">
-              A Proven Path from Idea to Impact
+              A
+              <span className="text-primary"> Proven </span>
+              Path from
+              <span className="text-primary"> Idea </span>
+              to Impact
             </h2>
           </div>
 
@@ -383,7 +393,12 @@ export default function data() {
       <section className="py-16 px-6 bg-[#F2F7FC]">
         <div className="container mx-auto">
           <div className="text-center">
-            <h2 className="">Solution that fit your Industry</h2>
+            <h2 className="">
+              Solutions
+              <span className="text-primary"> That </span>
+              Fit Your
+              <span className="text-primary"> Industry</span>
+            </h2>
           </div>
 
           <div className="flex md:flex-nowrap flex-wrap pt-6 pb-6">
@@ -528,7 +543,13 @@ export default function data() {
       <section className="py-16 px-6">
         <div className="container mx-auto">
           <div className="text-center">
-            <h2 className="">What Makes Our Solutions Different</h2>
+            <h2 className="">
+              What
+              <span className="text-primary"> Makes </span>
+              Our
+              <span className="text-primary"> Solutions </span>
+              Different
+            </h2>
           </div>
           <div className="p-3 ">
             <div className="flex justify-between flex-wrap gap-0 max-w-[1100px] mx-auto mt-[100px]">

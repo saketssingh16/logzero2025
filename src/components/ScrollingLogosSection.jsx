@@ -31,14 +31,27 @@ const bottomLogos = [
     { src: "/assets/icons/testng.png", alt: "TestNG" },
 ];
 
-
 export default function ScrollingLogosSection({ title, description }) {
+    const normalizedTitle =
+        typeof title === "string" ? title.trim() : "";
+
+    const renderedTitle =
+        normalizedTitle ===
+        "Build Smarter Digital Experiences with Expert Web Technologies" ? (
+            <>
+                Build <span className="text-primary">Smarter</span> Digital Experiences
+                with Expert <span className="text-primary">Web Technologies</span>
+            </>
+        ) : (
+            title
+        );
+
     return (
         <section className="px-4 bg-[#F2F7FC]">
             <div className="container mx-auto md:py-16 py-4">
                 <div className="flex flex-col gap-3 ">
                     <h2 className="mx-auto text-center">
-                        {title}
+                        {renderedTitle}
                     </h2>
                     <p className="max-w-[60%] mx-auto text-center text-[18px]">
                         {description}

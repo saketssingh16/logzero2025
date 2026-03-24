@@ -163,7 +163,7 @@ export default function UxServices() {
       <section id="services" className="py-16 px-6 bggray1">
         <div className="container mx-auto  ">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center fsumana ">Industries We Serve</h2>
+            <h2 className="mb-4 text-center fsumana "><span className="text-primary">Industries</span> We Serve</h2>
             <p className="text-center mb-10 max-w-full md:max-w-[55%] mx-auto fopensans">
               We bring expertise across diverse industries, creating tailored UX
               solutions that drive results for your specific market.
@@ -197,7 +197,10 @@ export default function UxServices() {
       <section id="services" className="pb-16 px-6">
         <div className="container mx-auto">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center fsumana">Our UX Design Services</h2>
+            <h2 className="mb-4 text-center fsumana">
+              Our <span className="text-primary">UX</span> Design
+              <span className="text-primary"> Services</span>
+            </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto fopensans">
               Comprehensive UX design services to transform your digital
               products and deliver exceptional user experiences.
@@ -293,7 +296,12 @@ export default function UxServices() {
 
       {/*Contact Us Form */}
       <ContactUsForm
-        heading="Let's Start Your UX Design Project"
+        heading={
+          <>
+            Let's <span className="text-primary">Start</span> Your
+            <span className="text-primary"> UX Design</span> Project
+          </>
+        }
         subheading="Tell us about your project, and we'll craft the best UX solution for your needs."
         contactCardTitle="Get in Touch"
         contactText="Ready to transform your digital experience? We're here to help you create user-centered designs that drive results and delight your customers."

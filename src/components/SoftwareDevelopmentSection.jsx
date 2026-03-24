@@ -317,7 +317,7 @@ export default function Mission() {
         <div className="container mx-auto ">
 
           <h2 className="text-center mb-12 heading-underline">
-            LogZero Technologies: Your Trusted Software Development Partner
+            LogZero Technologies: <span className="text-primary">Your</span> Trusted <span className="text-primary">Software</span> Development <span className="text-primary">Partner</span>
           </h2>
 
           <div className="flex flex-col lg:flex-row gap-14">
@@ -399,7 +399,7 @@ export default function Mission() {
         <div className="container mx-auto ">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center ">
-              Comprehensive Software Development Services for Every Need
+              Comprehensive <span className="text-primary">Software</span> Development <span className="text-primary">Services</span> for Every Need
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[75%] mx-auto ">
               From concept to deployment, we offer a complete range of software
@@ -443,8 +443,7 @@ export default function Mission() {
         <div className="container mx-auto ">
           <div className="headingbox pb-2 md:max-w-[65%] items-center mx-auto">
             <h2 className="mb-4 text-center">
-              Why LogZero is the Right Choice for Your Software Development
-              Needs
+              Why <span className="text-primary">LogZero</span> is the Right <span className="text-primary">Choice</span> for Your <span className="text-primary">Software</span> <span className="text-primary">Development</span> Needs
             </h2>
             <p className="text-center mb-10 max-w-full mx-auto">
               Partner with us for exceptional software development that drives
@@ -521,7 +520,7 @@ export default function Mission() {
         <div className="container mx-auto">
           <div className="headingbox pb-2 mb-10">
             <h2 className="mb-4 text-center">
-              End-to-End Software Development Process
+             <span className="text-primary">End-to-End</span>   Software Development <span className="text-primary">Process</span> 
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               Our proven development methodology ensures your project is
@@ -729,9 +728,9 @@ export default function Mission() {
       {/* <section className="py-16 px-6 bg-[#F2F7FC]">
         <div className="container mx-auto max-w-7xl">
           <div className="headingbox pb-2 mb-10">
-            <h2 className="mb-4 text-center ">
-              Flexible Software Development Plans
-              <br className="hidden sm:block" /> to Fit Your Needs
+            <h2 className="mb-4 text-center">
+              End-to-End <span className="text-primary">Software</span> <span className="text-primary">Development</span> Process
+            </h2>
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[75%] mx-auto">
               Choose the perfect package for your business requirements. All

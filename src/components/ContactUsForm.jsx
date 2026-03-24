@@ -253,7 +253,22 @@ export default function ContactSection({
     <section id={id} className="py-16 px-6 bgblue3 ">
       <div className="container mx-auto w-full max-w-6xl">
         <div className="mb-10 text-center">
-          <h2 className="mb-3">{heading}</h2>
+          <h2 className="mb-3">
+            {typeof heading === "string" &&
+            heading === "Still Thinking? Book a Free Strategy Session." ? (
+              <>
+                Still <span className="text-primary">Thinking</span>? Book a <span className="text-primary">Free</span> <span className="text-primary">Strategy</span> Session.
+              </>
+            ) :
+            typeof heading === "string" &&
+            heading.trim().toLowerCase() === "get in touch" ? (
+              <>
+                Get In <span className="text-primary">Touch</span>
+              </>
+            ) : (
+              heading
+            )}
+          </h2>
           <p className="mx-auto max-full md:max-w-[55%] text-center whitespace-pre-line">
             {subheading}
           </p>

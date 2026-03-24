@@ -47,11 +47,23 @@ function CounterValue({ value, duration = 1200 }) {
 }
 
 export default function WhyChooseUs({ heading, subheading, stats, features }) {
+  const renderedHeading = (() => {
+    if (typeof heading === "string" && heading === "What Sets Us Apart") {
+      return (
+        <>
+          What <span className="text-primary">Sets</span> Us <span className="text-primary">Apart</span>
+        </>
+      );
+    }
+
+    return heading;
+  })();
+
   return (
     <>
       {/* Heading */}
       <div className="text-center mb-12">
-        <h2>{heading}</h2>
+        <h2>{renderedHeading}</h2>
         <p className="mt-4 text-center py-3 max-w-[75%] mx-auto ">
           {subheading}
         </p>

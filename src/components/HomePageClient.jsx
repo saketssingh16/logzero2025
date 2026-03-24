@@ -213,8 +213,8 @@ export default function HomePageClient() {
   return (
     <>
       <HeroSection
-        title="Empowering Your Digital Transformation"
-        description="Specializing in Web Development, Mobile App Development, Data Management, DevOps, and UI/UX Design "
+        title="Build Scalable Web & Software Solutions for Your Business"
+        description="We design and develop high-performance web applications, mobile apps, and digital solutions for startups and enterprises worldwide."
         description2={false}
         shortdescription={false}
         addCounterNo={true}
@@ -237,7 +237,7 @@ export default function HomePageClient() {
       <section className="bggray1 px-6 animate-zoomIn pb-16">
         <div className="container mx-auto ">
           <div className="text-center py-16">
-            <h2 className="">About LogZero Technologies</h2>
+            <h2 className="">About <span className="text-primary">LogZero</span> Technologies</h2>
             <p className="mt-4 max-w-3xl mx-auto">
               We are a leading IT solutions company dedicated to empowering
               businesses through innovative technology solutions and exceptional
@@ -320,7 +320,7 @@ export default function HomePageClient() {
       <section className="py-16 px-6 bggray1 animate-zoomIn   ">
         <div className="container mx-auto">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center">Our Services</h2>
+            <h2 className="mb-4 text-center">Our <span className="text-primary">Services</span></h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               Comprehensive IT solutions designed to accelerate your business
               growth and digital transformation
@@ -362,7 +362,7 @@ export default function HomePageClient() {
       <section className="py-16 px-6 bg-[#F2F7FC]">
         <div className="container mx-auto">
           <div className="text-center">
-            <h2 className="">Tailored Data Services Across Industries</h2>
+            <h2 className="">Tailored <span className="text-primary">Data Services</span> Across <span className="text-primary">Industries</span></h2>
             <p className="mt-5 max-w-full md:max-w-[75%] mx-auto">
               Every sector has unique data challenges. We provide
               industry-specific data governance frameworks to ensure compliance
@@ -505,7 +505,11 @@ export default function HomePageClient() {
     {/* Scrolling Logos Section */}
     
       <ScrollingLogosSection
-          title="Build Smarter Digital Experiences with Expert Web Technologies"
+          title={
+            <>
+              Build <span className="text-primary">Smarter</span> Digital Experiences with Expert <span className="text-primary">Web Technologies</span>
+            </>
+          }
           description="We build smart, engaging digital experiences using modern web technologies—delivering high-performance websites 
                   and web apps that drive real results."
       />

@@ -122,7 +122,7 @@ export default function Services() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center ">
-              Our Services: Comprehensive Tech Solutions
+              Our <span className="text-primary">Services</span> : Comprehensive Tech <span className="text-primary">Solutions </span> 
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto ">
               We offer a wide range of technology services to meet your business
@@ -197,7 +197,7 @@ export default function Services() {
       <section id="services" className="pt-16 px-6 ">
         <div className="container mx-auto  ">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center ">Industries We Serve</h2>
+            <h2 className="mb-4 text-center "><span className="text-primary">Industries</span> We Serve</h2>
             <p className="text-center mb-10 max-w-full md:max-w-[55%] mx-auto ">
               We provide tailored solutions across diverse industries,
               understanding unique challenges and requirements
@@ -360,7 +360,7 @@ export default function Services() {
             </div>
 
             <div className="space-y-8">
-              <h2 className=""> Our Approach</h2>
+              <h2 className=""> Our <span className="text-primary">Approach</span> </h2>
               <p className="text-[18px] subtextcolor">
                 At Tech Solutions, we believe in a collaborative approach to
                 technology. We don't just build solutions; we partner with you

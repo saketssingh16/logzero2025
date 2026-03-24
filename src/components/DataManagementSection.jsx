@@ -170,7 +170,11 @@ export default function DataManagementPage() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Understanding Data Management in Today's Business World
+              Understanding
+              <span className="text-primary"> Data </span>
+              Management in Today's
+              <span className="text-primary"> Business </span>
+              World
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[80%] mx-auto">
               Modern businesses generate more data than ever before. Without
@@ -210,7 +214,11 @@ export default function DataManagementPage() {
             <div>
               <div className=" ">
                 <h2 className="headingbox mb-2">
-                  Your Trusted Partner for Enterprise Data Solutions
+                  Your
+                  <span className="text-primary"> Trusted </span>
+                  Partner for
+                  <span className="text-primary"> Enterprise </span>
+                  Data Solutions
                 </h2>
                 <p className=" mb-4">
                   For over a decade, Logzero Technologies has been the
@@ -292,7 +300,12 @@ export default function DataManagementPage() {
         <div className="container mx-auto">
           <div className="headingbox pb-2 mb-6">
             <h2 className="text-center">
-              Comprehensive Data Solutions to Fit Your Business
+              Comprehensive
+              <span className="text-primary"> Data </span>
+              Solutions to
+              <span className="text-primary"> Fit </span>
+              Your
+              <span className="text-primary"> Business</span>
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto py-3">
               {" "}
@@ -337,7 +350,13 @@ export default function DataManagementPage() {
       <section className="py-16 px-6 bg-[#F2F7FC]">
         <div className="container mx-auto">
           <div className="text-center">
-            <h2 className="">Tailored Data Services Across Industries</h2>
+            <h2 className="">
+              Tailored
+              <span className="text-primary"> Data </span>
+              Services
+              <span className="text-primary"> Across </span>
+              Industries
+            </h2>
             <p className="mt-5 max-w-full md:max-w-[75%] mx-auto">
               Every sector has unique data challenges. We provide
               industry-specific data governance frameworks to ensure compliance
@@ -467,7 +486,11 @@ export default function DataManagementPage() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Transform Your Business with Smarter Data
+              Transform
+              <span className="text-primary"> Your </span>
+              Business with
+              <span className="text-primary"> Smarter </span>
+              Data
             </h2>
             <p className="text-center mb-10 max-w-full  mx-auto">
               Our clients choose us for more than just data handling—they choose
@@ -505,7 +528,15 @@ export default function DataManagementPage() {
       <section className="px-6 bgblue1 py-16">
         <div className="container mx-auto">
           <SuccessStory
-            title="Real Results with LogZero Technologies"
+            title={
+              <>
+                Real
+                <span className="text-primary"> Results </span>
+                with
+                <span className="text-primary"> LogZero </span>
+                Technologies
+              </>
+            }
             subtitle="See how we’ve helped businesses transform their data infrastructure and 
 achieve measurable results."
             caseStudies={SucessStoryData}
@@ -526,7 +557,11 @@ achieve measurable results."
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              How We Deliver End-to-End Data Lifecycle Management
+              How We
+              <span className="text-primary"> Deliver </span>
+              End-to-End Data
+              <span className="text-primary"> Lifecycle </span>
+              Management
             </h2>
             <p className="text-center pb-8 max-w-full  mx-auto">
               Our proven methodology ensures successful data transformation from
@@ -758,7 +793,13 @@ achieve measurable results."
 
       {/* form */}
       <ContactUsForm
-        heading="Ready to Take Control of Your Business Data?"
+        heading={
+          <>
+            Ready to <span className="text-primary">Take Control</span> of
+            Your
+            <span className="text-primary"> Business Data</span>?
+          </>
+        }
         subheading="With LogZero Technologies' data management services, your business gets accuracy, compliance, and insights that drive real growth."
         contactCardTitle="Let’s Start a Conversation"
         contactText=""

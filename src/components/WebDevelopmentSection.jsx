@@ -226,7 +226,7 @@ const Services = () => {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              What We Do – Powerful Web Development Capabilities
+              What We Do – <span className="text-primary">Powerful</span> Web Development <span className="text-primary">Capabilities</span>
             </h2>
             {/* <p className="text-center mb-10 max-w-full md:max-w-[55%] mx-auto">We understand the pain points that frustrate users and hurt your business.Let us solve these challenges for you.</p> */}
           </div>
@@ -267,7 +267,7 @@ const Services = () => {
         <div className="container m-auto mb-6">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Our Development Process – Agile, Transparent, Proven
+               Our <span className="text-primary">Development Process</span>  – Agile, Transparent, <span className="text-primary">Proven</span>  
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[75%] mx-auto">
               Real projects, real results. See how we've helped businesses
@@ -387,7 +387,7 @@ const Services = () => {
       <section className="py-16 px-6">
         <div className="container mx-auto">
           <h2 className="mb-9 text-center">
-            We Engineer Experiences, Not Just Websites
+            We Engineer <span className="text-primary">Experiences</span>, Not Just <span className="text-primary">Websites</span>
           </h2>
 
           {/* Cards Container */}
@@ -467,7 +467,7 @@ const Services = () => {
       {/* industries we serve  */}
       <section className="py-16 px-6 bgblue3">
         <div className="container mx-auto">
-          <h2 className="mb-9 text-center">Industries we serve</h2>
+          <h2 className="mb-9 text-center"><span className="text-primary">Industries</span> we serve</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-6">
             {Industriesweserveimagedata?.map((service, index) => (

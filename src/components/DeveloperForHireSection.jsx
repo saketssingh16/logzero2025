@@ -132,7 +132,10 @@ export default function DeveloperForHire() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Why Hire Developers from Logzerotechnologies?
+              Why
+              <span className="text-primary"> Hire </span>
+              Developers from
+              <span className="text-primary"> Logzerotechnologies?</span>
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[55%] mx-auto">
               Logzerotechnologies provides top talent to help you scale, fill
@@ -201,7 +204,11 @@ export default function DeveloperForHire() {
       <section className="px-6 py-16 bgblue3">
         <div className="container mx-auto">
           <div className="headingbox pb-2 mb-10">
-            <h2 className="mb-4 text-center">Models of Hiring Developers</h2>
+            <h2 className="mb-4 text-center">
+              Models of
+              <span className="text-primary"> Hiring </span>
+              <span className="text-primary"> Developers</span>
+            </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               Find the perfect hiring model to fit your project requirements,
               team structure, and timeline.
@@ -412,7 +419,8 @@ export default function DeveloperForHire() {
         <div className="container mx-auto">
           <div className="headingbox pb-2 mb-10">
             <h2 className="mb-4 text-center">
-              How to Hire a Developer: Key Steps
+              How to <span className="text-primary">Hire</span> a Developer:
+              <span className="text-primary"> Key Steps</span>
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               Follow these simple steps to hire the perfect developer for your
@@ -566,7 +574,11 @@ export default function DeveloperForHire() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Benefits of Hiring Developers from Logzerotechnologies
+              Benefits of
+              <span className="text-primary"> Hiring </span>
+              <span className="text-primary"> Developers </span>
+              from
+              <span className="text-primary"> Logzerotechnologies</span>
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[55%] mx-auto">
               Why choose us? Here are the key benefits that make

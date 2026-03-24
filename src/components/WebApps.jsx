@@ -416,7 +416,7 @@ export default function CustomWebDevelopment() {
             <section className=" py-4 md:py-16 px-4">
                 <div className="container mx-auto">
                     <div className="text-center">
-                        <h2 className="mb-2">Industries We Serve</h2>
+                        <h2 className="mb-2"><span className="text-primary">Industries</span> We Serve</h2>
                         <p className="max-w-[80%] mx-auto">
                             Specialized testing solutions tailored to meet the unique requirements of your industry
                         </p>

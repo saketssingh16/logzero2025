@@ -368,7 +368,12 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white font-sans">
       <div className="container mx-auto px-4 lg:px-0 py-10">
-        <h2 className="font-semibold !text-[#2B2D2F] !text-[40px] mb-2">Tech Insights & Industry Updates</h2>
+        <h2 className="font-semibold !text-[#2B2D2F] !text-[40px] mb-2">
+          Tech
+          <span className="text-primary"> Insights </span>
+          & Industry
+          <span className="text-primary"> Updates</span>
+        </h2>
         {/* Header and Search */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
           <h3 className="!text-xl font-bold !text-[#1E8767] mb-4 md:mb-0">
@@ -587,7 +592,8 @@ export default function App() {
         {/* search by category start */}
         <div className="mt-16">
           <h2 className="text-2xl font-semibold mb-4 text-[#2B2D2F]">
-            Search by Category
+            Search by
+            <span className="text-primary"> Category</span>
           </h2>
           <div className=" border-b border-[#E5E5E7] mb-8"></div>
 
@@ -629,7 +635,8 @@ export default function App() {
         {/* Popular posts */}
         <section className="mt-16">
           <h2 className="text-2xl font-semibold mb-4 text-[#2B2D2F]">
-            Popular Posts
+            Popular
+            <span className="text-primary"> Posts</span>
           </h2>
           <div className="border-b border-[#E5E5E7] mb-8"></div>
 
@@ -731,7 +738,10 @@ export default function App() {
         {/* Popular posts */}
         <section className="mt-16">
           <h2 className="text-2xl font-semibold mb-4 text-[#2B2D2F]">
-           You May Also Like
+            You
+            <span className="text-primary"> May </span>
+            Also
+            <span className="text-primary"> Like</span>
           </h2>
           <div className="border-b border-[#E5E5E7] mb-8"></div>
 

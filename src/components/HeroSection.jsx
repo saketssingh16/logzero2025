@@ -36,8 +36,22 @@ export default function HeroSection({
         <div className="my-auto">
            <div className="gap-6 pt-[30px] pb-[30px] pl-6 xl:pl-[80px] lg:pl-[50px] md:pl-8 pr-6 lg:pr-[30px] md:pr-[0px]">
           {/* Heading */}
-          {title && (
-            <h1 className={`${titlecolor ? "textblue7" : ""}`}>{title}</h1>
+                  {title && (
+            <h1 >
+              {title.split(" ").map((word, index, array) => (
+                <span
+                  key={index}
+                  className={
+                    index === 1 || index >= array.length - 2
+                      ? "textblue7"
+                      : ""
+                  }
+                >
+                  {word}
+                  {index !== array.length - 1 && " "}
+                </span>
+              ))}
+            </h1>
           )}
 
           {subtitle && <h2 className="subheading-4 mt-5">{subtitle}</h2>}
