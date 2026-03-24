@@ -289,7 +289,12 @@ const SearchResultClient = () => {
             </div>
 
             <div className="bg-white ">
-              <h2 className="text-xl font-semibold mb-4">You may also like</h2>
+              <h2 className="text-xl font-semibold mb-4">
+                You
+                <span className="text-primary"> may </span>
+                also
+                <span className="text-primary"> like</span>
+              </h2>
               {youMayLikeLoading ? (
                 <p className="text-gray-500">Loading...</p>
               ) : (

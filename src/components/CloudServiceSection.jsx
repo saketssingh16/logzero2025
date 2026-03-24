@@ -243,7 +243,10 @@ export default function CloudServices() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              LogZero Technologies: Your Trusted Partner in Cloud Solutions
+              LogZero Technologies: Your
+              <span className="text-primary"> Trusted </span>
+              Partner in
+              <span className="text-primary"> Cloud Solutions</span>
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               LogZero Technologies provides custom cloud solutions to enhance
@@ -279,7 +282,11 @@ export default function CloudServices() {
         <div className="container mx-auto">
           <div className="headingbox pb-2 mb-6">
             <h2 className="text-center">
-              Comprehensive Cloud Services Tailored to Your Business Needs
+              Comprehensive
+              <span className="text-primary"> Cloud Services </span>
+              Tailored to Your
+              <span className="text-primary"> Business</span>
+              Needs
             </h2>
           </div>
 
@@ -312,7 +319,13 @@ export default function CloudServices() {
           {/* Heading */}
           <div className="text-center mb-12">
             <h2 className="mb-4">
-              Why LogZero is the Best Choice for Your Cloud Journey
+              Why
+              <span className="text-primary"> LogZero </span>
+              is the
+              <span className="text-primary"> Best Choice </span>
+              for Your
+              <span className="text-primary"> Cloud</span>
+              Journey
             </h2>
           </div>
 
@@ -374,7 +387,11 @@ export default function CloudServices() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Transform Your Business with Our Cloud Solutions
+              Transform
+              <span className="text-primary"> Your Business </span>
+              with Our
+              <span className="text-primary"> Cloud</span>
+              Solutions
             </h2>
           </div>
 
@@ -616,7 +633,10 @@ export default function CloudServices() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              How to Do Cloud Migration in 3 Simple Steps?
+              How to Do
+              <span className="text-primary"> Cloud Migration </span>
+              in 3
+              <span className="text-primary"> Simple Steps</span>?
             </h2>
           </div>
 
@@ -667,7 +687,12 @@ export default function CloudServices() {
         <div className="container mx-auto">
           <div className="headingbox mb-10">
             <h2 className="text-center">
-              Top-notch Cloud Security: Safeguarding Your Data
+              <span className="text-primary">Top-notch</span>
+              {" "}
+              Cloud Security:
+              <span className="text-primary"> Safeguarding</span>
+              {" "}
+              Your Data
             </h2>
           </div>
 
@@ -737,7 +762,13 @@ export default function CloudServices() {
       </section>
 
       <ContactUsForm
-        heading="Ready to Take Your Business to the Cloud?"
+        heading={
+          <>
+            Ready to <span className="text-primary">Take</span> Your
+            {" "}
+            Business to the <span className="text-primary">Cloud</span>?
+          </>
+        }
         subheading="Contact us today to get started with LogZero Technologies’ cloud services. Our experts will guide through every step of the process, from planning to implementation, and beyond."
         contactCardTitle="Why Choose LogZero Technologies?"
         contactText=""

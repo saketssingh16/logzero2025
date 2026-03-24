@@ -96,6 +96,28 @@ export default function SuccessStory({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const renderedTitle = (() => {
+    if (typeof title === "string") {
+      if (title === "Our Success Story") {
+        return (
+          <>
+            Our <span className="text-primary">Success</span> Story
+          </>
+        );
+      }
+
+      if (title === "Case Studies") {
+        return (
+          <>
+            Case <span className="text-primary">Studies</span>
+          </>
+        );
+      }
+    }
+
+    return title;
+  })();
+
   const resolvedCategoryId = useMemo(() => {
     if (portfolioCategoryId) return portfolioCategoryId;
     if (!portfolioCategorySlug) return null;
@@ -174,7 +196,7 @@ export default function SuccessStory({
       {/* Title + Subtitle */}
       {!isEmpty && (
         <div className="text-center  mb-12">
-          <h2 className="mb-5 !text-[32px] !font-bold">{title}</h2>
+          <h2 className="mb-5 !text-[32px] !font-bold">{renderedTitle}</h2>
           <p className="max-w-full md:max-w-[65%] mx-auto">{subtitle}</p>
           {loading && (
             <span className="sr-only" aria-live="polite">

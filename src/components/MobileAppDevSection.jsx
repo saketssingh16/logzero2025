@@ -334,9 +334,9 @@ export default function MobileDevelopment() {
 
       {/* <Trusted /> */}
       <Trusted
-        bgcolorchange=""
-        titlecolor="textblack"
-        subtitlecolor="textblack"
+         bgcolorchange="bgsecondary"
+         titlecolor="textwhite"
+        subtitlecolor="textwhite"
         title="Trusted by Leading Companies"
         subtitle="We’ve partnered with industry leaders to deliver exceptional mobile experiences."
       />
@@ -345,7 +345,10 @@ export default function MobileDevelopment() {
       <section id="services" className="py-16 px-6">
         <div className="container mx-auto">
           <div className="headingbox pb-2 text-center">
-            <h2 className="mb-4">Challenges Mobile App Users Face</h2>
+            <h2 className="mb-4">
+              <span className="text-primary">Challenges</span> Mobile App
+              <span className="text-primary"> Users</span> Face
+            </h2>
             <p className="max-w-full md:max-w-[55%] mx-auto">
               We understand the pain points that frustrate users and hurt your
               business. Let us solve these challenges for you.
@@ -380,7 +383,7 @@ export default function MobileDevelopment() {
         <div className="container m-auto mb-6">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Our Development Process – Agile, Transparent, Proven
+              Our <span className="text-primary">Development Process</span>  – Agile, Transparent, <span className="text-primary">Proven</span>  
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[75%] mx-auto">
               Real projects, real results. See how we've helped businesses
@@ -505,7 +508,11 @@ export default function MobileDevelopment() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Comprehensive Mobile App Development Services
+              Comprehensive
+              <span className="text-primary"> Mobile </span>
+              App
+              <span className="text-primary"> Development </span>
+              Services
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               From concept to deployment and beyond, we provide end-to-end
@@ -542,7 +549,7 @@ export default function MobileDevelopment() {
         <div className="container mx-auto">
           {/* Heading */}
           <div className="text-center mb-12">
-            <h2 className="mb-4">What Sets Us Apart</h2>
+            <h2 className="mb-4">What <span className="text-primary">Sets</span> Us <span className="text-primary">Apart</span></h2>
             <p className="max-w-full md:max-w-[75%] mx-auto">
               We don’t just build apps – we create digital experiences that
               transform businesses and delight users. Here’s what makes Logzero
@@ -611,7 +618,9 @@ export default function MobileDevelopment() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Tailored App Solutions for Every Need
+              Tailored <span className="text-primary">App</span> Solutions
+              {" "}
+              for Every <span className="text-primary">Need</span>
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               Whether you need a native iOS app, cross-platform solution, or
@@ -660,7 +669,8 @@ export default function MobileDevelopment() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Industry-Focused Mobile Applications
+              Industry-Focused <span className="text-primary">Mobile</span>{" "}
+              <span className="text-primary">Applications</span>
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               We specialize in creating tailored mobile solutions for diverse

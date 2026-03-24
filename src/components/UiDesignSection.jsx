@@ -140,7 +140,11 @@ export default function UI() {
           titlecolor="textblack"
           subtitlecolor="textblack"
           // logobgchange="bgblue3"
-          title="Trusted by Leading Companies"
+          title={
+            <>
+              Trusted by <span className="text-primary">Leading</span> Companies
+            </>
+          }
           subtitle="We've partnered with innovative companies across various industries 
 to create exceptional user experiences."
         />
@@ -153,7 +157,7 @@ to create exceptional user experiences."
       <section className="py-16 px-6 bgblue1">
         <div className="container mx-auto">
           <div className="text-center">
-            <h2 className="mb-2">Industries We Serve</h2>
+            <h2 className="mb-2"><span className="text-primary">Industries</span> We Serve</h2>
             <p className="max-w-[80%] mx-auto">
               Our expertise spans across diverse industries, delivering tailored
               UI designs that meet specific market needs and user expectations.
@@ -272,7 +276,10 @@ to create exceptional user experiences."
       <section className="py-16 px-6">
         <div className="container mx-auto">
           <div className="text-center">
-            <h2 className="">What Clients Need for Exceptional UI Design</h2>
+            <h2 className="">
+              What <span className="text-primary">Clients</span> Need for
+              <span className="text-primary"> Exceptional</span> UI Design
+            </h2>
             <p className="text-center mx-auto max-w-[70%] mt-3">
               Our approach blends innovative design, technical skill, and
               strategic insight to produce user interfaces that are visually
@@ -357,7 +364,10 @@ to create exceptional user experiences."
       <section id="services" className="py-16 px-6 bgblue3">
         <div className="container mx-auto">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center fsumana">Our UI Design Services</h2>
+            <h2 className="mb-4 text-center fsumana">
+              Our <span className="text-primary">UI</span> Design
+              <span className="text-primary"> Services</span>
+            </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto fopensans">
               From concept to completion, we offer comprehensive UI design
               services that transform your vision into engaging digital
@@ -400,7 +410,8 @@ to create exceptional user experiences."
         <div className="container mx-auto">
           <div className="headingbox pb-2 mb-10">
             <h2 className="mb-4 text-center">
-              Our UI Design Development Process
+              Our <span className="text-primary">UI</span> Design
+              <span className="text-primary"> Development</span> Process
             </h2>
             <p className=" text-center mx-auto max-w-[60%]">
               Our structured approach ensures every project delivers exceptional
@@ -731,7 +742,9 @@ to create exceptional user experiences."
       <section className="py-16 px-6 ">
         <div className="container mx-auto ">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center ">Why We're Different</h2>
+            <h2 className="mb-4 text-center ">
+              Why We're <span className="text-primary">Different</span>
+            </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[85%] mx-auto ">
               At LogZero Technologies, we create attractive designs focused on
               intuitive user experiences to enhance your business. Our method is

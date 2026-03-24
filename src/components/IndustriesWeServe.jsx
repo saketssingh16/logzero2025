@@ -6,7 +6,11 @@ const Industries = ({ title, industries }) => {
     <section className="py-20 bg-white text-center">
       <div className="mb-12">
         <h2 className="text-gray-900 mb-4">
-          {title || "Industries We Serve"}
+          {title || (
+            <>
+              <span className="text-primary">Industries</span> We Serve
+            </>
+          )}
         </h2>
       </div>
 

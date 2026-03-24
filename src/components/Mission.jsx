@@ -104,7 +104,9 @@ export default function Mission() {
       <section className="py-16 px-6">
         <div className="container mx-auto">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center">The Purpose Behind Our Passion</h2>
+            <h2 className="mb-4 text-center">
+              The <span className="text-primary">Purpose</span> Behind Our <span className="text-primary">Passion</span>
+            </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               Our core pillars guide everything we do
             </p>
@@ -148,7 +150,7 @@ export default function Mission() {
 
             <div className="flex-1 flex flex-col justify-center">
               <h2 className="!leading-[117%]">
-                Turning Challenges into Opportunities
+                Turning <span className="text-primary">Challenges</span> into <span className="text-primary">Opportunities</span>
               </h2>
               <p className="pt-4">
                 At LogZero Technologies, we see every challenge as a chance to
@@ -237,7 +239,9 @@ export default function Mission() {
       <section className="py-16 px-6 ">
         <div className="container mx-auto ">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center ">Our Commitment, Your Success</h2>
+            <h2 className="mb-4 text-center ">
+              Our <span className="text-primary">Commitment,</span> Your <span className="text-primary">Success</span>
+            </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[75%] mx-auto ">
               Our mission guides our future — a future where technology bridges
               gaps, fuels innovation, and creates meaningful change.

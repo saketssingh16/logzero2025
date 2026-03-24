@@ -124,14 +124,18 @@ export default function AboutUs() {
         bgcolorchange=""
         titlecolor="textblack"
         subtitlecolor="textblack"
-        title="Trusted by Leading Companies"
+        title={
+          <>
+            Trusted by <span className="text-primary">Leading</span> Companies
+          </>
+        }
         subtitle="We’ve partnered with industry leaders to deliver exceptional mobile experiences."
       />
 
       {/* mission & vision */}
       <section className="py-16 px-6">
         <div className="container mx-auto">
-          <h2 className="mb-4 text-center">Mission & Vision</h2>
+          <h2 className="mb-4 text-center"><span className="text-primary">Mission</span> & Vision</h2>
           <p className="max-w-full md:max-w-[75%] mx-auto">
             Delivering innovative, reliable, and scalable technology solutions
             that drive your success
@@ -139,12 +143,12 @@ export default function AboutUs() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 mt-8">
             <div className="flex flex-col bg-[#EFF6FF] rounded-xl p-6">
-              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-4 mb-4">
                 <div className="w-11 h-11 flex items-center justify-center rounded-full bg-blue-600 text-white">
                   {" "}
                   <Target size={24} />
                 </div>
-                <h3 className="subheading-4">Our Mission</h3>
+                <h3 className="subheading-4"><span className="text-primary">Our Mission</span></h3>
               </div>
               <p className="text-gray-700">
                 To deliver innovative, reliable, and scalable technology
@@ -156,7 +160,7 @@ export default function AboutUs() {
 
             {/* Vision */}
             <div className="flex flex-col bg-[#F9F3FF] rounded-xl p-6">
-              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-4 mb-4">
                 <div className="w-11 h-11 flex items-center justify-center rounded-full bg-purple-600 text-white">
                   <Lightbulb size={24} />
                 </div>
@@ -176,7 +180,7 @@ export default function AboutUs() {
       <section className="py-16 px-6 bg-[#F2F7FC]">
         <div className="container mx-auto">
           <div className="text-center">
-            <h2 className="">Industries We Serve</h2>
+            <h2 className=""><span className="text-primary">Industries</span> We Serve</h2>
             <p className="mt-5 max-w-full md:max-w-[75%] mx-auto">
               We provide tailored solutions across diverse industries,
               understanding unique challenges and requirements
@@ -306,7 +310,7 @@ export default function AboutUs() {
       <section className="py-16 px-6">
         <div className="container mx-auto">
           <div className="headingbox mb-6">
-            <h2 className="mb-4 text-center">Our Credentials</h2>
+            <h2 className="mb-4 text-center">Our <span className="text-primary">Credentials</span></h2>
             <p className="text-center mb-12 max-w-full md:max-w-[70%] mx-auto">
               At LogZero Technologies, our credentials demonstrate expertise and
               commitment to excellence. With a track record of exceptional
@@ -342,7 +346,7 @@ export default function AboutUs() {
       <section className="bg-white pb-16 px-6">
         <div className="container mx-auto max-w-7xl">
           <div className="headingbox text-center mb-10">
-            <h2 className="mb-4">Our Core Values</h2>
+            <h2 className="mb-4">Our Core <span className="text-primary">Values</span></h2>
             <p className="mb-12 w-full mx-auto">
               The principles that guide everything we do
             </p>

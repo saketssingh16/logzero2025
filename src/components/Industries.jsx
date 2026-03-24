@@ -59,7 +59,7 @@ export default function Industries() {
     <section className="py-20 bg-white text-center">
       <div className="mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          Industries We Serve
+          <span className="text-primary">Industries </span>  We Serve
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           We provide tailored solutions across diverse industries, understanding

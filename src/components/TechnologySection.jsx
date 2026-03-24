@@ -105,7 +105,12 @@ export default function solutions() {
       {/* Why Our Technology Stack Matters */}
       <section className="py-16 px-6">
         <div className=" max-w-6xl mx-auto text-center">
-          <h2 className=" mb-3">Why Our Technology Stack Matters</h2>
+          <h2 className=" mb-3">
+            Why
+            <span className="text-primary"> Our Technology </span>
+            Stack
+            <span className="text-primary"> Matters</span>
+          </h2>
           <p className="mb-12 max-w-[40%] mx-auto">
             We solve real business pain points with the right technology choices
           </p>
@@ -150,7 +155,11 @@ export default function solutions() {
       <section className="py-16 px-6 bg-[#F2F7FC]">
         <div className="container mx-auto max-w-7xl">
           <div className="headingbox pb-2 mb-10">
-            <h2 className="mb-4 text-center">Our Technology & Tooling</h2>
+            <h2 className="mb-4 text-center">
+              Our
+              <span className="text-primary"> Technology </span>
+              & Tooling
+            </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[55%] mx-auto">
               The stacks, tools, and platforms we work with — grouped by
               category so you know exactly what we bring to the table
@@ -360,7 +369,10 @@ export default function solutions() {
         <div className="container mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-900">
-              How We Apply These for You
+              How
+              <span className="text-primary"> We </span>
+              Apply These
+              <span className="text-primary"> for You</span>
             </h2>
             <p className="max-w-[55%] mx-auto text-center mt-2">
               Turning technology into business value across different domains
@@ -453,7 +465,7 @@ export default function solutions() {
       <section className="py-16 px-6">
         <div className="container mx-auto">
           <div className="text-center">
-            <h2 className="mb-2">Industries We Serve</h2>
+            <h2 className="mb-2"><span className="text-primary">Industries</span> We Serve</h2>
             <p className="max-w-[80%] mx-auto">
               Our expertise spans across diverse industries, delivering tailored
               UI designs that meet specific market needs and user expectations.

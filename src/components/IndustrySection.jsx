@@ -138,7 +138,11 @@ export default function IndustryWeServe() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Comprehensive Mobile App Development Services
+              Comprehensive
+              <span className="text-primary"> Mobile </span>
+              App
+              <span className="text-primary"> Development </span>
+              Services
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               From concept to deployment and beyond, we provide end-to-end
@@ -240,7 +244,7 @@ export default function IndustryWeServe() {
       <section className="py-16 px-6 ">
         <div className="container mx-auto ">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center ">Industry we serve</h2>
+            <h2 className="mb-4 text-center "><span className="text-primary">Industries</span> we serve</h2>
             <p className="text-center mb-10 max-w-full md:max-w-[75%] mx-auto ">
               We offer customized solutions for all industries, ensuring that
               each sector gets the attention it needs. By understanding unique
@@ -329,7 +333,11 @@ export default function IndustryWeServe() {
       <section id="services" className="py-16 px-6">
         <div className="container mx-auto">
           <div className="headingbox pb-2">
-            <h2 className="mb-4 text-center ">Our Core Services</h2>
+            <h2 className="mb-4 text-center ">
+              Our
+              <span className="text-primary"> Core </span>
+              <span className="text-primary"> Services</span>
+            </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto ">
               Tailored Solutions for Your Industry
             </p>

@@ -188,6 +188,8 @@ a{
 .textblack{color:var(--text-black)}
 .textgray{color:var(--text-gray)}
 
+.text-primary{color:var(--primary-color)}
+
 .textblue{color:var(--text-blue)}
 .textblue7 {
   color: #1E8767;

@@ -15,6 +15,15 @@ export default function FeaturableEmbed({
   const [loaded, setLoaded] = useState(false);
   const [uniqueId] = useState(`featurable-${WIDGET_UUID}`);
 
+  const renderedTitle =
+    typeof title === "string" && title === "See Why Our Clients Trust Us" ? (
+      <>
+        See Why Our <span className="text-primary">Clients Trust Us</span>
+      </>
+    ) : (
+      title
+    );
+
   useEffect(() => {
     let script = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
 
@@ -69,7 +78,7 @@ export default function FeaturableEmbed({
           TESTIMONIAL
         </span>
         <h2 className="mb-4 !text-[30px] !font-semibold !leading-[117%]">
-          {title}
+          {renderedTitle}
         </h2>
         {subtitle && (
           <p className="mb-12 max-w-full md:max-w-[60%] mx-auto text-gray-600">

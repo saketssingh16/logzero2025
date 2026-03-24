@@ -145,7 +145,16 @@ export default async function CategoryPage(props) {
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 					<div className="gap-6 pt-[30px] pb-[30px] pl-6 xl:pl-[80px] lg:pl-[50px] md:pl-8 pr-6 lg:pr-[30px] md:pr-[0px]">
 						<h2 className=" lg:!text-[48px] md:!leading-[2rem] lg:!leading-[3rem] font-semibold text-[#1F1F1F]">
-							{rawParam ? `${displaySlug} Insights & Best Practices` : "Category"}
+							{rawParam ? (
+								<>
+									{displaySlug}{" "}
+									<span className="text-primary">Insights</span>
+									{" "}&{" "}
+									<span className="text-primary">Best Practices</span>
+								</>
+							) : (
+								"Category"
+							)}
 						</h2>
 						<p className="lg:text-xl text-[#111827] my-2">{`Latest posts for ${displaySlug || "this category"}.`}</p>
 						<div className="inline-block">
@@ -160,7 +169,7 @@ export default async function CategoryPage(props) {
 			<div className="container mx-auto px-4 lg:px-0 pb-10">
 				{/* search by category start */}
 				<div className="mt-16">
-					<h2 className="text-2xl font-semibold mb-4 text-[#2B2D2F]">Find Blogs by Your Interest</h2>
+					<h2 className="text-2xl font-semibold mb-4 text-[#2B2D2F]">Find <span className="text-primary">Blogs</span> by Your <span className="text-primary">Interest</span></h2>
 					<div className=" border-b border-[#E5E5E7] mb-8" />
 
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -211,7 +220,7 @@ export default async function CategoryPage(props) {
 						</div>
 					) : (
 						<>
-							<h2 className="text-2xl font-semibold mb-4 text-[#2B2D2F]">Latest Posts</h2>
+							<h2 className="text-2xl font-semibold mb-4 text-[#2B2D2F]">Latest <span className="text-primary">Posts</span></h2>
 							<div className="border-b border-[#E5E5E7] mb-8" />
 							<CategoryPostsClient initialPosts={listRows} morePosts={rows.slice(9)} />
 						</>

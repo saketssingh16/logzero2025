@@ -232,7 +232,7 @@ export default function Global() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              Why Choose LogZero Technologies?
+              Why <span className="text-primary">Choose</span> <span className="text-primary">LogZero</span> Technologies?
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               WAt LogZero Technologies, we specialize in delivering innovative,
@@ -300,7 +300,9 @@ export default function Global() {
       <section className="bg-white pt-16 px-6">
         <div className="container mx-auto ">
           <div className="headingbox pb-2 text-center">
-            <h2 className="mb-4">Serving Major Markets Worldwide</h2>
+            <h2 className="mb-4">
+              Serving <span className="text-primary">Major Markets</span> Worldwide
+            </h2>
             <p className="max-w-full md:max-w-[55%] mx-auto">
               LogZero Technologies serves businesses across continents, with
               localized expertise in the following regions.
@@ -348,7 +350,8 @@ export default function Global() {
         <div className="container mx-auto">
           <div className="headingbox pb-2">
             <h2 className="mb-4 text-center">
-              World-Class Solutions for Your Business Needs
+              World-Class <span className="text-primary">Solutions</span> for Your
+              <span className="text-primary"> Business</span> Needs
             </h2>
             <p className="text-center mb-10 max-w-full md:max-w-[65%] mx-auto">
               No matter where you're located, LogZero Technologies has the
@@ -392,7 +395,10 @@ export default function Global() {
       <section id="services" className="pb-16 px-6">
         <div className="container mx-auto">
           <div className="headingbox pb-2 text-center">
-            <h2 className="mb-4">Driving Success Across Multiple Industries</h2>
+            <h2 className="mb-4">
+              Driving <span className="text-primary">Success</span> Across
+              <span className="text-primary"> Multiple</span> Industries
+            </h2>
             <p className="max-w-full  mx-auto">
               Whether you're in tech, finance, healthcare, or education, our
               solutions fit your unique needs.
@@ -449,7 +455,12 @@ export default function Global() {
       </section>
 
       <ContactUsForm
-        heading="Let's Connect and Start Building Your Future Today"
+        heading={
+          <>
+            Let's <span className="text-primary">Connect</span> and Start
+            Building <span className="text-primary">Your Future</span> Today
+          </>
+        }
         subheading="Whether you're looking to transform your business with technology or simply have a question, we're here to help. Reach out today and let's discuss how we can support your growth."
         contactCardTitle="Get in Touch"
         contactText=""

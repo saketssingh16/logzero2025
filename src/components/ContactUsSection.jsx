@@ -334,7 +334,9 @@ export default function ContactSection() {
                       </p>
                     </div>
                   )}
-                  <h3 className="subheading-4 mb-3">Get In Touch</h3>
+                  <h3 className="subheading-4 mb-3">
+                    Get In <span className="text-primary">Touch</span>
+                  </h3>
                   <p className="!text-[14px] subtextcolor !leading-[128%]  pb-4">
                     Fill out the form below and we'll get back to you as soon as
                     possible.
@@ -422,7 +424,9 @@ export default function ContactSection() {
             <div>
               <div className="space-y-6 border border-[#F0F0F0] bg-white lg:max-w-[372px] p-6">
                 <div>
-                  <h3 className="subheading-4 mb-4">Our Contacts</h3>
+                  <h3 className="subheading-4 mb-4">
+                    Our <span className="text-primary">Contacts</span>
+                  </h3>
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-3 subtext subtextcolor  ">
                     <div className="bg-[#3C74ED] p-3 rounded-full inline-block transition-transform duration-200 hover:scale-105">
                       <Phone className="text-[#f9fbfe] " size={20} />
@@ -451,7 +455,7 @@ export default function ContactSection() {
 
                 <div>
                   <h3 className=" !text-[24px] finter !leading-[1.28] !tracking-normal mb-2">
-                    Social Media
+                    Social <span className="text-primary">Media</span>
                   </h3>
                   <div className="flex gap-3 text-gray-600">
                     {/* LinkedIn */}
