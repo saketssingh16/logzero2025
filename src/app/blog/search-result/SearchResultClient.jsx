@@ -48,8 +48,8 @@ const formatCategoryName = (value) =>
 
 const getPostHref = (post) => {
   const identifier = post?.id ?? post?.slug ?? "";
-  if (!identifier) return "/blog/blogDetails";
-  return `/blog/blogDetails?id=${encodeURIComponent(identifier)}`;
+  if (!identifier) return "/blog/blog-details";
+  return `/blog/blog-details?id=${encodeURIComponent(identifier)}`;
 };
 
 const SearchResultClient = () => {
@@ -136,7 +136,7 @@ const SearchResultClient = () => {
   const handleSearchKey = (event) => {
     if (event.key === "Enter" && searchTerm.trim()) {
       router.push(
-        `/blog/searchResult?q=${encodeURIComponent(searchTerm.trim())}`
+        `/blog/search-result?q=${encodeURIComponent(searchTerm.trim())}`
       );
     }
   };

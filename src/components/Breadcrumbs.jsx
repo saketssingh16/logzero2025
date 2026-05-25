@@ -37,7 +37,7 @@ function buildBreadcrumbs({ pathname, searchParams, currentLabel }) {
     }
 
     // /blog/searchResult
-    if (segments[1] === "searchResult") {
+    if (segments[1] === "search-result") {
       items.push({ label: "Search" });
       return items;
     }
@@ -45,7 +45,7 @@ function buildBreadcrumbs({ pathname, searchParams, currentLabel }) {
     // /blog/blogDetails?id=...
     // /blog/[slug]
     const slugOrId =
-      segments[1] === "blogDetails"
+      segments[1] === "blog-details"
         ? searchParams.get("id") || ""
         : segments[1];
 

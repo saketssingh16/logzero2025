@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import BlogDetailsClient from "../blogDetails/BlogDetailsClient";
+import BlogDetailsClient from "../blog-details/BlogDetailsClient";
 import api from "@/lib/api";
 
 export const revalidate = 0;

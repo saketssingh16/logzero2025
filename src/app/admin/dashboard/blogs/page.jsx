@@ -483,14 +483,14 @@ export default function BlogDashboard() {
 
           <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto">
             <button
-              onClick={() => router.push("/admin/dashboard/metaList")}
+              onClick={() => router.push("/admin/dashboard/meta-list")}
               className="flex-1 md:flex-none flex items-center justify-center gap-2 border border-blue-500/60 bg-blue-500/10 hover:bg-blue-500/20 text-blue-100 px-3 md:px-4 py-2 text-sm md:text-base rounded-md transition-colors hover:bg-zinc-800 whitespace-nowrap cursor-pointer"
             >
               <Layers size={16} /> Meta List
             </button>
 
             <button
-              onClick={() => router.push("/admin/dashboard/createMeta")}
+              onClick={() => router.push("/admin/dashboard/create-meta")}
               className="flex-1 md:flex-none cursor-pointer flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-3 md:px-4 py-2 text-sm md:text-base rounded-md transition-colors whitespace-nowrap"
             >
               <Plus size={16} /> Create Page

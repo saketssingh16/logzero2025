@@ -28,7 +28,7 @@ const getDevPostHref = (post) => {
 
    // fallback if slug missing
   const id = post?.id;
-  if (id) return `/blog/blogDetails?id=${encodeURIComponent(id)}`;
+  if (id) return `/blog/blog-details?id=${encodeURIComponent(id)}`;
   
    return "/blog";
 };
@@ -160,7 +160,7 @@ export default function App() {
 
   const handleSearch = (e) => {
     if (e.key === "Enter" && searchTerm.trim()) {
-      router.push(`/blog/searchResult?q=${searchTerm.trim()}`);
+      router.push(`/blog/search-result?q=${searchTerm.trim()}`);
     }
   };
 

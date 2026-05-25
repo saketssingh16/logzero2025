@@ -9,7 +9,7 @@ const getDevPostHref = (post) => {
   if (slug) return `/blog/${encodeURIComponent(slug)}`;
 
   const id = post?.id;
-  if (id) return `/blog/blogDetails?id=${encodeURIComponent(id)}`;
+  if (id) return `/blog/blog-details?id=${encodeURIComponent(id)}`;
 
   return "/blog";
 };

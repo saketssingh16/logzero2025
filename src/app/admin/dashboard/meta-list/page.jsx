@@ -248,7 +248,7 @@ const Page = () => {
 
   const handleEdit = (row) => {
     if (!row?.id) return;
-    router.push(`/admin/dashboard/metaEdit/${row.id}`);
+    router.push(`/admin/dashboard/meta-edit/${row.id}`);
   };
 
   const handleDelete = (row) => {
