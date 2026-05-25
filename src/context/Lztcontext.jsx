@@ -804,6 +804,7 @@ const LztProvider = ({ children }) => {
       title: "E-Commerce Development",
       description:
         "From Shopify to Magento and custom builds we design storefronts that sell and scale.",
+      link: "/custom-ecommerce",
     },
     {
       icon: <Settings size={22} className="text-white" />,

@@ -466,7 +466,7 @@ export default function App() {
                   </Link>
                   <p className="text-sm text-gray-500 mb-4 flex items-center mt-2">
                     <span className="font-semibold text-gray-700 mr-2 text-xs">
-                      BY NEHA BHATNAGAR
+                      {`By ${featuredPost.author}`}
                     </span>
                     &bull;
                     <CalendarDays className="w-4 h-4 mx-1 text-gray-400 " />
@@ -503,7 +503,7 @@ export default function App() {
                         ? post.featuredImageDesc || post.metaTitle || post.title || "Post image"
                         : ""
                     }
-                    className="object-cover rounded-[2px]"
+                    className="w-32 h-26 object-cover rounded-[2px]"
                   />
                 </div>
                 <div className="flex-grow">
