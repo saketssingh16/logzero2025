@@ -120,6 +120,10 @@ export default async function BlogByIdPage({ params }) {
             [&_li]:mb-1
             [&_a]:text-blue-400 [&_a]:underline
             [&_img]:max-w-full [&_img]:rounded-md [&_img]:my-3
+            [&_.table-container]:overflow-x-auto [&_.table-container]:w-full
+            [&_table]:w-full [&_table]:border-collapse [&_table]:mb-4
+            [&_th]:border [&_th]:border-zinc-700 [&_th]:p-2 [&_th]:bg-zinc-800
+            [&_td]:border [&_td]:border-zinc-700 [&_td]:p-2 [&_td]:min-w-[50px] [&_td]:break-words
           `}
           dangerouslySetInnerHTML={{ __html: html }}
         />

@@ -196,7 +196,7 @@ export default function BlogDetailsClient({ identifier }) {
                       {contentBlocks.map((block, idx) => (
                         <div
                           key={block?.id ?? idx}
-                          className="[&_*]:max-w-full"
+                          className="[&_*]:max-w-full [&_a]:text-[#1E8767] [&_a]:underline hover:[&_a]:text-[#5BC2A7] transition-colors [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-3 [&_li]:mb-1 [&_.table-container]:overflow-x-auto [&_.table-container]:w-full [&_table]:w-full [&_table]:border-collapse [&_table]:mb-4 [&_th]:border [&_th]:border-gray-300 [&_th]:p-2 [&_th]:bg-gray-50 [&_td]:border [&_td]:border-gray-300 [&_td]:p-2 [&_td]:min-w-[50px] [&_td]:break-words"
                           dangerouslySetInnerHTML={{ __html: block.data.text }}
                         />
                       ))}

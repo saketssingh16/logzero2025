@@ -18,6 +18,7 @@ import {
   ListOrdered,
   Link2,
   Image as ImageIcon,
+  Table,
   Code,
   X,
 } from "lucide-react";
@@ -44,6 +45,16 @@ const BlogEditor = ({
   const [linkSponsored, setLinkSponsored] = useState(false);
   const [linkNoFollow, setLinkNoFollow] = useState(false);
   const [editingLinkNode, setEditingLinkNode] = useState(null);
+
+  // Table Modal State
+  const [showTableModal, setShowTableModal] = useState(false);
+  const [tableRows, setTableRows] = useState(2);
+  const [tableCols, setTableCols] = useState(2);
+
+  // Selected cell
+  const [selectedCell, setSelectedCell] = useState(null);
+  const [cellColSpan, setCellColSpan] = useState(1);
+  const [cellRowSpan, setCellRowSpan] = useState(1);
 
   // Selected image
   const [selectedImage, setSelectedImage] = useState(null);
@@ -107,6 +118,16 @@ const BlogEditor = ({
     setImgAlt("");
   };
 
+  const clearSelectedCell = () => {
+    if (selectedCell) {
+      selectedCell.style.outline = "";
+      selectedCell.style.backgroundColor = "";
+    }
+    setSelectedCell(null);
+    setCellColSpan(1);
+    setCellRowSpan(1);
+  };
+
   // --- Selection Management ---
   const saveSelection = () => {
     const sel = window.getSelection();
@@ -148,13 +169,20 @@ const BlogEditor = ({
 
   // --- Effects ---
   useEffect(() => {
+    if (initialContent !== content) {
+      setContent(initialContent);
+      setHtmlContent(initialContent);
+    }
+  }, [initialContent]);
+
+  useEffect(() => {
     if (editorRef.current && !showHtmlMode) {
       if (editorRef.current.innerHTML !== content) {
         editorRef.current.innerHTML = content;
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showHtmlMode]);
+  }, [showHtmlMode, content]);
 
   useEffect(() => {
     const handleSelectionChange = () => {
@@ -228,6 +256,7 @@ const BlogEditor = ({
     const target = e.target;
 
     if (selectedImage && target !== selectedImage) clearSelectedImage();
+    if (selectedCell && !selectedCell.contains(target)) clearSelectedCell();
 
     let linkNode = target.closest("a");
     if (!linkNode && target.tagName === "IMG") {
@@ -258,6 +287,15 @@ const BlogEditor = ({
       setImgW(img.getAttribute("width") ?? "");
       setImgH(img.getAttribute("height") ?? "");
       setImgAlt(img.getAttribute("alt") ?? "");
+    }
+
+    const cell = target.closest("td, th");
+    if (cell) {
+      setSelectedCell(cell);
+      cell.style.outline = "2px solid #3b82f6";
+      cell.style.backgroundColor = "rgba(59, 130, 246, 0.1)";
+      setCellColSpan(cell.getAttribute("colspan") || 1);
+      setCellRowSpan(cell.getAttribute("rowspan") || 1);
     }
   };
 
@@ -355,6 +393,277 @@ const BlogEditor = ({
     setImgH("");
     setTimeout(() => handleContentChange(), 10);
   };
+
+  // --- Table Handlers ---
+  const getCellCoordinates = (targetCell) => {
+    const table = targetCell.closest("table");
+    if (!table) return null;
+
+    const rows = Array.from(table.rows);
+    const grid = []; // 2D array: grid[y][x] = cellElement
+
+    rows.forEach((row, y) => {
+      let x = 0;
+      Array.from(row.cells).forEach((cell) => {
+        const rs = parseInt(cell.getAttribute("rowspan") || 1);
+        const cs = parseInt(cell.getAttribute("colspan") || 1);
+
+        // Find next empty spot in grid
+        while (grid[y] && grid[y][x]) x++;
+
+        for (let i = 0; i < rs; i++) {
+          if (!grid[y + i]) grid[y + i] = [];
+          for (let j = 0; j < cs; j++) {
+            grid[y + i][x + j] = cell;
+          }
+        }
+        x += cs;
+      });
+    });
+
+    // Find target coordinates
+    let targetY = -1, targetX = -1;
+    for(let y=0; y<grid.length; y++) {
+        const idx = grid[y].indexOf(targetCell);
+        if(idx !== -1) {
+            targetY = y;
+            targetX = idx;
+            break;
+        }
+    }
+
+    const tableRows = grid.length;
+    const tableCols = grid[0] ? grid[0].length : 0;
+
+    return { y: targetY, x: targetX, grid, tableRows, tableCols };
+  };
+
+  const openTableModal = () => {
+    clearSelectedImage();
+    clearSelectedCell();
+    const restored = restoreSelection();
+    if (!restored) ensureSelectionInsideEditor();
+    setShowTableModal(true);
+  };
+
+  const insertTable = () => {
+    const rows = parseInt(tableRows);
+    const cols = parseInt(tableCols);
+
+    if (isNaN(rows) || rows < 1 || isNaN(cols) || cols < 1) {
+      toast.error("Please enter valid rows and columns");
+      return;
+    }
+
+    let tableHtml = `
+      <div class="table-container" style="overflow-x: auto; margin-bottom: 1rem; width: 100%;">
+        <table style="width:100%; border-collapse: collapse; border: 1px solid #ccc; table-layout: fixed;">
+          <tbody>
+    `;
+    for (let i = 0; i < rows; i++) {
+      tableHtml += "<tr>";
+      for (let j = 0; j < cols; j++) {
+        tableHtml += '<td style="border: 1px solid #ccc; padding: 8px; min-width: 50px; word-break: break-word;">&nbsp;</td>';
+      }
+      tableHtml += "</tr>";
+    }
+    tableHtml += "</tbody></table></div><p><br/></p>";
+
+    restoreSelection();
+    document.execCommand("insertHTML", false, tableHtml);
+    setShowTableModal(false);
+    setTimeout(() => handleContentChange(), 10);
+  };
+
+  const addRowBottom = () => {
+    if (!selectedCell) return;
+    const table = selectedCell.closest("table");
+    if (!table) return;
+    
+    const coords = getCellCoordinates(selectedCell);
+    const cols = coords ? coords.tableCols : 1;
+    
+    const row = selectedCell.closest("tr");
+    const rowIndex = row.rowIndex;
+    const rowspan = parseInt(selectedCell.getAttribute("rowspan") || 1);
+    const insertIndex = rowIndex + rowspan;
+    
+    const newRow = table.insertRow(insertIndex);
+    for (let i = 0; i < cols; i++) {
+      const cell = newRow.insertCell();
+      cell.style.border = "1px solid #ccc";
+      cell.style.padding = "8px";
+      cell.style.minWidth = "50px";
+      cell.style.wordBreak = "break-word";
+      cell.innerHTML = "&nbsp;";
+    }
+    handleContentChange();
+  };
+
+  const addColumnRight = () => {
+    if (!selectedCell) return;
+    const table = selectedCell.closest("table");
+    const coords = getCellCoordinates(selectedCell);
+    if (!table || !coords) return;
+    
+    const colspan = parseInt(selectedCell.getAttribute("colspan") || 1);
+    const targetX = coords.x + colspan;
+    
+    Array.from(table.rows).forEach((row, y) => {
+      let insertIndex = 0;
+      let x = 0;
+      while (x < targetX) {
+        const cell = coords.grid[y][x];
+        if (cell) {
+          if (cell.parentElement === row) {
+            insertIndex++;
+          }
+          const cs = parseInt(cell.getAttribute("colspan") || 1);
+          x += cs;
+        } else {
+          x++;
+        }
+      }
+      
+      const newCell = row.insertCell(insertIndex);
+      newCell.style.border = "1px solid #ccc";
+      newCell.style.padding = "8px";
+      newCell.style.minWidth = "50px";
+      newCell.style.wordBreak = "break-word";
+      newCell.innerHTML = "&nbsp;";
+    });
+    handleContentChange();
+  };
+
+  const deleteRow = () => {
+    if (!selectedCell) return;
+    const row = selectedCell.closest("tr");
+    if (row) {
+      const table = row.closest("table");
+      row.remove();
+      if (table && table.querySelectorAll("tr").length === 0) {
+        table.closest(".table-container")?.remove() || table.remove();
+      }
+      clearSelectedCell();
+      handleContentChange();
+    }
+  };
+
+  const deleteColumn = () => {
+    if (!selectedCell) return;
+    const table = selectedCell.closest("table");
+    const coords = getCellCoordinates(selectedCell);
+    if (!coords || !table) return;
+
+    const targetX = coords.x;
+    const cellsToDelete = new Set();
+    
+    // Find all cells that overlap with targetX in the grid
+    for (let y = 0; y < coords.grid.length; y++) {
+      const cell = coords.grid[y][targetX];
+      if (cell) cellsToDelete.add(cell);
+    }
+    
+    cellsToDelete.forEach(cell => cell.remove());
+
+    if (table.rows[0]?.cells.length === 0) {
+      table.closest(".table-container")?.remove() || table.remove();
+    }
+    clearSelectedCell();
+    handleContentChange();
+  };
+
+  const deleteCell = () => {
+    if (!selectedCell) return;
+    const row = selectedCell.parentElement;
+    selectedCell.remove();
+    if (row && row.cells.length === 0) {
+      const table = row.closest("table");
+      row.remove();
+      if (table && table.rows.length === 0) {
+        table.closest(".table-container")?.remove() || table.remove();
+      }
+    }
+    clearSelectedCell();
+    handleContentChange();
+  };
+
+  const applyCellAttributes = () => {
+  if (!selectedCell) return;
+  const coords = getCellCoordinates(selectedCell);
+  if (!coords) return;
+
+  const { y: startY, x: startX, grid, tableRows, tableCols } = coords;
+
+  // 1. Capture the existing spans before changing them
+  const oldColSpan = parseInt(selectedCell.getAttribute("colspan") || 1);
+  const oldRowSpan = parseInt(selectedCell.getAttribute("rowspan") || 1);
+
+  const newColSpan = Math.min(Math.max(parseInt(cellColSpan) || 1, 1), tableCols - startX);
+  const newRowSpan = Math.min(Math.max(parseInt(cellRowSpan) || 1, 1), tableRows - startY);
+
+  if (oldColSpan === newColSpan && oldRowSpan === newRowSpan) return;
+
+  // 2. Handle EXPANDING: Remove cells that are newly covered
+  if (newColSpan > oldColSpan || newRowSpan > oldRowSpan) {
+    const cellsToRemove = new Set();
+    for (let i = 0; i < newRowSpan; i++) {
+      for (let j = 0; j < newColSpan; j++) {
+        // Skip the cells that were already part of the old span footprint
+        if (i < oldRowSpan && j < oldColSpan) continue;
+
+        if (startY + i >= grid.length || startX + j >= grid[0].length) continue;
+        const cell = grid[startY + i][startX + j];
+        if (cell && cell !== selectedCell) {
+          cellsToRemove.add(cell);
+        }
+      }
+    }
+    cellsToRemove.forEach(cell => cell.remove());
+  }
+
+  // 3. Handle SHRINKING: Restore missing cells if user reduces the span
+  if (newColSpan < oldColSpan || newRowSpan < oldRowSpan) {
+    const table = selectedCell.closest("table");
+    const rows = Array.from(table.rows);
+
+    for (let i = 0; i < oldRowSpan; i++) {
+      for (let j = 0; j < oldColSpan; j++) {
+        // Skip the area that is still covered by the new span
+        if (i < newRowSpan && j < newColSpan) continue;
+
+        const targetY = startY + i;
+        if (targetY < rows.length) {
+          const newCell = document.createElement("td");
+          newCell.style.border = "1px solid #ccc";
+          newCell.style.padding = "8px";
+          newCell.style.minWidth = "50px";
+          newCell.style.wordBreak = "break-word";
+          newCell.innerHTML = "&nbsp;";
+
+          const row = rows[targetY];
+          
+          // Find the correct cell to insert before to maintain DOM order
+          const nextCellX = startX + oldColSpan;
+          const nextCell = grid[targetY] && grid[targetY][nextCellX];
+          
+          if (nextCell && nextCell.parentElement === row) {
+            row.insertBefore(newCell, nextCell);
+          } else {
+            row.appendChild(newCell);
+          }
+        }
+      }
+    }
+  }
+
+  // 4. Apply the new attributes
+  selectedCell.setAttribute("colspan", newColSpan);
+  selectedCell.setAttribute("rowspan", newRowSpan);
+  setCellColSpan(newColSpan);
+  setCellRowSpan(newRowSpan);
+  setTimeout(() => handleContentChange(), 10);
+};
 
   const insertBlogImageBlock = (base64, imgWidth, imgHeight) => {
     const blockId = `blogimg_${++imageRef.current}`;
@@ -549,6 +858,38 @@ const BlogEditor = ({
           </div>
         )}
 
+        {/* Table Cell resize/merge */}
+        {selectedCell && (
+          (() => {
+            const coords = getCellCoordinates(selectedCell);
+            const maxC = coords ? coords.tableCols : 1;
+            const maxR = coords ? coords.tableRows : 1;
+            
+            return (
+              <div className="flex items-center gap-2 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700">
+                <span className="text-xs text-gray-600 dark:text-gray-300">Cell</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-500">ColSpan</span>
+                  <input type="number" min={1} max={maxC} value={cellColSpan} onChange={(e) => setCellColSpan(e.target.value)} className="w-14 px-1.5 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-500">RowSpan</span>
+                  <input type="number" min={1} max={maxR} value={cellRowSpan} onChange={(e) => setCellRowSpan(e.target.value)} className="w-14 px-1.5 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
+                </div>
+                <button type="button" onClick={applyCellAttributes} className="px-2 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700">Merge</button>
+                <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 mx-1" />
+                <button type="button" onClick={addRowBottom} className="px-2 py-1 text-sm rounded bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400">+ Row</button>
+                <button type="button" onClick={addColumnRight} className="px-2 py-1 text-sm rounded bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400">+ Col</button>
+                <div className="w-px h-4 bg-gray-300 dark:bg-gray-600 mx-1" />
+                <button type="button" onClick={deleteRow} className="px-2 py-1 text-sm rounded bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400">Del Row</button>
+                <button type="button" onClick={deleteColumn} className="px-2 py-1 text-sm rounded bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400">Del Col</button>
+                <button type="button" onClick={deleteCell} className="px-2 py-1 text-sm rounded bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400">Del Cell</button>
+                <button type="button" onClick={clearSelectedCell} className="px-2 py-1 text-sm rounded bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-500">Deselect</button>
+              </div>
+            );
+          })()
+        )}
+
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
 
         {[
@@ -576,10 +917,11 @@ const BlogEditor = ({
 
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
 
-        <button type="button" onClick={() => handleList("ul")} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition text-gray-700 dark:text-gray-300"><List size={18} /></button>
-        <button type="button" onClick={() => handleList("ol")} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition text-gray-700 dark:text-gray-300"><ListOrdered size={18} /></button>
-        <button type="button" onClick={openLinkModal} className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition text-gray-700 dark:text-gray-300 ${selectedImage ? "bg-blue-100 text-blue-600" : ""}`}><Link2 size={18} /></button>
-        <button type="button" onClick={onImageIconClick} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition text-gray-700 dark:text-gray-300"><ImageIcon size={18} /></button>
+        <button type="button" onClick={() => handleList("ul")} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition text-gray-700 dark:text-gray-300" title="Bullet List"><List size={18} /></button>
+        <button type="button" onClick={() => handleList("ol")} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition text-gray-700 dark:text-gray-300" title="Numbered List"><ListOrdered size={18} /></button>
+        <button type="button" onClick={openLinkModal} className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition text-gray-700 dark:text-gray-300 ${selectedImage ? "bg-blue-100 text-blue-600" : ""}`} title="Insert Link"><Link2 size={18} /></button>
+        <button type="button" onClick={onImageIconClick} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition text-gray-700 dark:text-gray-300" title="Insert Image"><ImageIcon size={18} /></button>
+        <button type="button" onClick={openTableModal} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition text-gray-700 dark:text-gray-300" title="Insert Table"><Table size={18} /></button>
         <button type="button" onClick={toggleHtmlMode} className={`p-2 rounded transition ml-auto ${showHtmlMode ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"}`} title="Toggle HTML Source"><Code size={18} /></button>
       </div>
 
@@ -631,6 +973,11 @@ const BlogEditor = ({
             /* Links & Images */
             [&_a]:text-blue-600 dark:[&_a]:!text-blue-400 [&_a]:underline [&_a]:cursor-pointer
             [&_img]:max-w-full [&_img]:rounded-md [&_img]:shadow-sm [&_img]:cursor-pointer [&_img:hover]:opacity-90
+
+            /* Tables */
+            [&_table]:w-full [&_table]:border-collapse [&_table]:mb-4
+            [&_th]:border [&_th]:border-gray-300 [&_th]:p-2 [&_th]:bg-gray-50 dark:[&_th]:bg-gray-800
+            [&_td]:border [&_td]:border-gray-300 [&_td]:p-2 [&_td]:min-w-[50px]
           `}
         />
       )}
@@ -690,6 +1037,32 @@ const BlogEditor = ({
             <div className="flex gap-3">
               <button type="button" onClick={handleLinkSave} className="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition font-medium shadow-sm">{editingLinkNode || selectedImage ? "Update" : "Insert"}</button>
               <button type="button" onClick={() => setShowLinkModal(false)} className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition font-medium">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Table Modal */}
+      {showTableModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 backdrop-blur-sm" onClick={(e) => { if (e.target === e.currentTarget) setShowTableModal(false); }}>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-2xl border border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Insert Table</h3>
+              <button type="button" onClick={() => setShowTableModal(false)} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"><X size={20} /></button>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rows</label>
+                <input type="number" min={1} value={tableRows} onChange={(e) => setTableRows(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Columns</label>
+                <input type="number" min={1} value={tableCols} onChange={(e) => setTableCols(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button type="button" onClick={insertTable} className="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition font-medium shadow-sm">Insert</button>
+              <button type="button" onClick={() => setShowTableModal(false)} className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition font-medium">Cancel</button>
             </div>
           </div>
         </div>
